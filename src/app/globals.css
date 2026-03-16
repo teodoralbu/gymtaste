@@ -72,7 +72,17 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   min-height: 100vh;
+  -webkit-overflow-scrolling: touch;
 }
+
+/* GPU-accelerate animated elements */
+.card-hover, .card-press, .btn {
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+}
+
+/* Faster tap response on iOS */
+* { -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
 
 a { color: inherit; text-decoration: none; }
 

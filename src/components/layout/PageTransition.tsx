@@ -1,22 +1,28 @@
 'use client'
 
 import { usePathname } from 'next/navigation'
-import { motion, AnimatePresence } from 'framer-motion'
+import { useEffect, useRef } from 'react'
 
 export function PageTransition({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
+  const ref = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    el.style.opacity = '0'
+    el.style.transform = 'translateY(6px)'
+    const raf = requestAnimationFrame(() => {
+      el.style.transition = 'opacity 0.18s ease, transform 0.18s ease'
+      el.style.opacity = '1'
+      el.style.transform = 'translateY(0)'
+    })
+    return () => cancelAnimationFrame(raf)
+  }, [pathname])
+
   return (
-    <AnimatePresence mode="popLayout" initial={false}>
-      <motion.div
-        key={pathname}
-        initial={{ x: 40, opacity: 0 }}
-        animate={{ x: 0, opacity: 1 }}
-        exit={{ x: -40, opacity: 0 }}
-        transition={{ duration: 0.2, ease: [0.25, 0.46, 0.45, 0.94] }}
-        style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}
-      >
-        {children}
-      </motion.div>
-    </AnimatePresence>
+    <div ref={ref} style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0, willChange: 'transform, opacity' }}>
+      {children}
+    </div>
   )
 }
