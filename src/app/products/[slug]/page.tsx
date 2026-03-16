@@ -219,7 +219,7 @@ export default async function ProductPage({ params }: Props) {
                 style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}
               >
                 <div
-                  className="card card-hover"
+                  className="card card-hover card-press"
                   style={{
                     padding: '16px 20px',
                     display: 'flex',

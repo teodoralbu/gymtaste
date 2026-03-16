@@ -110,7 +110,7 @@ export default async function BrowsePage() {
             {byBrand[brandName].map((product, pi) => (
               <Link key={product.id} href={`/products/${product.slug}`} style={{ textDecoration: 'none', color: 'inherit' }}>
                 <div
-                  className="card card-hover"
+                  className="card card-hover card-press"
                   style={{
                     padding: '20px',
                     display: 'flex',

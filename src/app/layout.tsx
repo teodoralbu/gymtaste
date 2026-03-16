@@ -4,6 +4,8 @@ import { AuthProvider } from '@/context/auth-context'
 import { ThemeProvider } from '@/context/theme-context'
 import { Navbar } from '@/components/layout/Navbar'
 import { Footer } from '@/components/layout/Footer'
+import { BottomNav } from '@/components/layout/BottomNav'
+import { PageTransition } from '@/components/layout/PageTransition'
 
 export const metadata: Metadata = {
   title: 'GYMTASTE — Rate it before you waste it.',
@@ -39,8 +41,15 @@ export default function RootLayout({
         <ThemeProvider>
           <AuthProvider>
             <Navbar />
-            <main className="flex-1">{children}</main>
-            <Footer />
+            <PageTransition>
+              <main className="flex-1 pb-[calc(64px+env(safe-area-inset-bottom))] sm:pb-0">
+                {children}
+              </main>
+            </PageTransition>
+            <div className="hidden sm:block">
+              <Footer />
+            </div>
+            <BottomNav />
           </AuthProvider>
         </ThemeProvider>
       </body>

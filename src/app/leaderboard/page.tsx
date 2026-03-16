@@ -95,7 +95,7 @@ export default async function LeaderboardPage() {
                 style={{ textDecoration: 'none', color: 'inherit' }}
               >
                 <div
-                  className="card-hover"
+                  className="card-hover card-press"
                   style={{
                     backgroundColor: isPodium ? 'var(--bg-elevated)' : 'var(--bg-card)',
                     border: isPodium

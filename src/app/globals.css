@@ -274,3 +274,33 @@ input[type='range']::-webkit-slider-thumb:active {
 }
 
 .footer-link:hover { color: var(--text); }
+
+/* ─── Mobile / PWA ───────────────────────────────────────────────────────────── */
+
+/* No rubber-band scroll on iOS */
+html, body {
+  overscroll-behavior: none;
+}
+
+/* Safe area support */
+:root {
+  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* Card press feedback on mobile */
+.card-press {
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+  cursor: pointer;
+}
+
+.card-press:active {
+  transform: scale(0.97);
+}
+
+/* Hide scrollbar on mobile lists */
+@media (max-width: 640px) {
+  .card {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
