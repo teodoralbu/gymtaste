@@ -298,9 +298,23 @@ html, body {
   transform: scale(0.97);
 }
 
-/* Hide scrollbar on mobile lists */
+/* ─── Mobile compact layout ──────────────────────────────────────────────────── */
+
 @media (max-width: 640px) {
   .card {
     -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Reduce all page top padding on mobile */
+  .page {
+    padding-top: 16px !important;
+    padding-bottom: 16px !important;
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+
+  /* Compact section headers */
+  .section-header {
+    margin-bottom: 16px !important;
   }
 }

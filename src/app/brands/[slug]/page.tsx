@@ -73,7 +73,7 @@ export default async function BrandPage({ params }: Props) {
   const totalFlavors = Object.values(flavorCountMap).reduce((a, b) => a + b, 0)
 
   return (
-    <div style={{ maxWidth: '860px', margin: '0 auto', padding: '48px 24px 80px' }}>
+    <div style={{ maxWidth: '860px', margin: '0 auto', padding: 'clamp(16px, 5vw, 48px) 16px 80px' }}>
 
       {/* Breadcrumb */}
       <div style={{ fontSize: '13px', color: 'var(--text-dim)', marginBottom: '32px', display: 'flex', gap: '6px', alignItems: 'center' }}>

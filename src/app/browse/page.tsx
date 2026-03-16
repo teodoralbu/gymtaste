@@ -72,7 +72,7 @@ export default async function BrowsePage() {
   const brands = Object.keys(byBrand).sort()
 
   return (
-    <div style={{ maxWidth: '960px', margin: '0 auto', padding: '48px 24px 80px' }}>
+    <div style={{ maxWidth: '960px', margin: '0 auto', padding: 'clamp(16px, 5vw, 48px) clamp(16px, 3vw, 24px) 80px' }}>
 
       {/* Header */}
       <div style={{ marginBottom: '48px' }}>

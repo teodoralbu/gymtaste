@@ -22,7 +22,7 @@ export default async function FlavorPage({ params }: Props) {
   const brand = (product as any).brands
 
   return (
-    <div style={{ maxWidth: '800px', margin: '0 auto', padding: '40px 24px 80px' }}>
+    <div style={{ maxWidth: '800px', margin: '0 auto', padding: 'clamp(16px, 4vw, 40px) 16px 80px' }}>
 
       {/* Breadcrumb */}
       <div style={{ fontSize: '13px', color: 'var(--text-dim)', marginBottom: '28px', display: 'flex', gap: '6px', alignItems: 'center', flexWrap: 'wrap' }}>

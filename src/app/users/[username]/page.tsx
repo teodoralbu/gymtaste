@@ -64,7 +64,7 @@ export default async function UserProfilePage({ params }: Props) {
     : 100
 
   return (
-    <div style={{ maxWidth: '800px', margin: '0 auto', padding: '48px 20px 96px' }}>
+    <div style={{ maxWidth: '800px', margin: '0 auto', padding: 'clamp(16px, 5vw, 48px) 16px 96px' }}>
 
       {/* Profile header card */}
       <div

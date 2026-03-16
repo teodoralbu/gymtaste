@@ -88,7 +88,7 @@ export default async function SearchPage({ searchParams }: Props) {
   const total = results ? results.flavors.length + results.products.length + results.brands.length : 0
 
   return (
-    <div style={{ maxWidth: '800px', margin: '0 auto', padding: '48px 24px 80px' }}>
+    <div style={{ maxWidth: '800px', margin: '0 auto', padding: 'clamp(16px, 5vw, 48px) 16px 80px' }}>
 
       {/* Header */}
       <div style={{ marginBottom: '40px' }}>

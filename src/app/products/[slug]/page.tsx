@@ -27,7 +27,7 @@ export default async function ProductPage({ params }: Props) {
   ].filter((s) => s.value !== null)
 
   return (
-    <div style={{ maxWidth: '860px', margin: '0 auto', padding: '40px 20px 80px' }}>
+    <div style={{ maxWidth: '860px', margin: '0 auto', padding: 'clamp(16px, 4vw, 40px) 16px 80px' }}>
 
       {/* Breadcrumb */}
       <nav

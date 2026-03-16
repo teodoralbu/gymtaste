@@ -124,7 +124,7 @@ export default function SubmitPage() {
   }
 
   return (
-    <div style={{ maxWidth: '520px', margin: '0 auto', padding: '56px 24px 96px' }}>
+    <div style={{ maxWidth: '520px', margin: '0 auto', padding: 'clamp(16px, 5vw, 56px) 16px 96px' }}>
 
       {/* Header */}
       <div style={{ marginBottom: '48px' }}>

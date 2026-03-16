@@ -14,7 +14,7 @@ export default async function LeaderboardPage() {
   const leaderboard = await getLeaderboard(50)
 
   return (
-    <div style={{ maxWidth: '860px', margin: '0 auto', padding: '48px 20px 96px' }}>
+    <div style={{ maxWidth: '860px', margin: '0 auto', padding: 'clamp(16px, 5vw, 48px) 16px 96px' }}>
 
       {/* Header */}
       <div style={{ marginBottom: '48px' }}>

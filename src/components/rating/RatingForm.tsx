@@ -109,7 +109,7 @@ export function RatingForm({ flavor }: Props) {
   }
 
   return (
-    <div style={{ maxWidth: '600px', margin: '0 auto', padding: '40px 20px 80px' }}>
+    <div style={{ maxWidth: '600px', margin: '0 auto', padding: 'clamp(16px, 4vw, 40px) 16px 80px' }}>
 
       {/* Flavor header */}
       <div style={{ marginBottom: '36px' }}>

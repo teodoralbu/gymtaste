@@ -51,7 +51,7 @@ export default async function Home() {
       {/* ── Hero ── */}
       <section style={{
         textAlign: 'center',
-        padding: 'clamp(72px, 12vw, 120px) 24px clamp(56px, 8vw, 80px)',
+        padding: 'clamp(32px, 8vw, 120px) 24px clamp(24px, 5vw, 80px)',
       }}>
 
         {/* Logo mark */}
