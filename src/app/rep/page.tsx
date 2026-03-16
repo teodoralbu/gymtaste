@@ -49,9 +49,9 @@ export default function RepPage() {
     const db = supabase as any
     const ext = file.name.split('.').pop()
     const filename = `rep_${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`
-    const { error: uploadError } = await db.storage.from('uploads').upload(filename, file)
+    const { error: uploadError } = await db.storage.from('rep-photo').upload(filename, file)
     if (uploadError) return null
-    const { data } = db.storage.from('uploads').getPublicUrl(filename)
+    const { data } = db.storage.from('rep-photo').getPublicUrl(filename)
     return data?.publicUrl ?? null
   }
 
