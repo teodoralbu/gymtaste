@@ -8,62 +8,90 @@ import { useAuth } from '@/context/auth-context'
 import { XP_VALUES } from '@/lib/constants'
 
 type RepForm = 'progress' | 'pr' | 'checkin' | null
+type Visibility = 'public' | 'followers_only'
+
+const btn: React.CSSProperties = {
+  fontFamily: 'inherit', border: 'none', cursor: 'pointer',
+  WebkitTapHighlightColor: 'transparent', transition: 'all 0.15s',
+}
+
+const inputStyle: React.CSSProperties = {
+  width: '100%', padding: '11px 14px', fontFamily: 'inherit',
+  backgroundColor: 'var(--bg-elevated)', border: '1px solid var(--border)',
+  borderRadius: 'var(--radius-sm)', color: 'var(--text)', fontSize: '15px',
+  outline: 'none', boxSizing: 'border-box',
+}
+
+const labelStyle: React.CSSProperties = {
+  display: 'block', fontSize: '12px', fontWeight: 600,
+  color: 'var(--text-dim)', marginBottom: '7px',
+  textTransform: 'uppercase', letterSpacing: '0.05em',
+}
+
+function VisPicker({ value, onChange }: { value: Visibility; onChange: (v: Visibility) => void }) {
+  return (
+    <div>
+      <label style={labelStyle}>Visibility</label>
+      <div style={{ display: 'flex', gap: '8px', backgroundColor: 'var(--bg-elevated)', padding: '4px', borderRadius: 'var(--radius-sm)' }}>
+        {(['public', 'followers_only'] as Visibility[]).map((v) => (
+          <button key={v} type="button" onClick={() => onChange(v)} style={{
+            ...btn, flex: 1, padding: '8px', textAlign: 'center',
+            fontSize: '13px', fontWeight: 600, borderRadius: 'var(--radius-sm)',
+            backgroundColor: value === v ? 'var(--accent)' : 'transparent',
+            color: value === v ? '#000' : 'var(--text-dim)',
+          }}>
+            {v === 'public' ? 'Public' : 'Followers only'}
+          </button>
+        ))}
+      </div>
+    </div>
+  )
+}
 
 export default function RepPage() {
   const router = useRouter()
   const { user } = useAuth()
   const [activeForm, setActiveForm] = useState<RepForm>(null)
   const [submitting, setSubmitting] = useState(false)
+  const [uploadingPhoto, setUploadingPhoto] = useState(false)
+  const [posted, setPosted] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  // Progress Photo form state
+  // Progress
   const [progressCaption, setProgressCaption] = useState('')
-  const [progressVisibility, setProgressVisibility] = useState<'public' | 'followers'>('public')
+  const [progressVis, setProgressVis] = useState<Visibility>('public')
   const [progressPhotoFile, setProgressPhotoFile] = useState<File | null>(null)
   const [progressPhotoPreview, setProgressPhotoPreview] = useState<string | null>(null)
   const progressFileRef = useRef<HTMLInputElement>(null)
 
-  // PR form state
+  // PR
   const [prExercise, setPrExercise] = useState('')
   const [prValue, setPrValue] = useState('')
   const [prUnit, setPrUnit] = useState<'kg' | 'lbs' | 'reps'>('kg')
   const [prCaption, setPrCaption] = useState('')
-  const [prVisibility, setPrVisibility] = useState<'public' | 'followers'>('public')
+  const [prVis, setPrVis] = useState<Visibility>('public')
 
-  // Check-in form state
+  // Check-in
   const [checkinGym, setCheckinGym] = useState('')
   const [checkinNote, setCheckinNote] = useState('')
-  const [checkinVisibility, setCheckinVisibility] = useState<'public' | 'followers'>('public')
-
-  function handleProgressPhoto(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0]
-    if (!file) return
-    setProgressPhotoFile(file)
-    const url = URL.createObjectURL(file)
-    setProgressPhotoPreview(url)
-  }
+  const [checkinVis, setCheckinVis] = useState<Visibility>('public')
 
   async function uploadPhoto(file: File): Promise<string | null> {
+    setUploadingPhoto(true)
     const supabase = createClient()
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const db = supabase as any
     const ext = file.name.split('.').pop()
-    const filename = `rep_${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`
+    const filename = `${user!.id}/${Date.now()}.${ext}`
     const { error: uploadError } = await db.storage.from('rep-photo').upload(filename, file)
-    if (uploadError) return null
+    setUploadingPhoto(false)
+    if (uploadError) { setError('Photo upload failed: ' + uploadError.message); return null }
     const { data } = db.storage.from('rep-photo').getPublicUrl(filename)
     return data?.publicUrl ?? null
   }
 
-  async function submitRep(
-    type: 'progress' | 'pr' | 'checkin',
-    payload: Record<string, unknown>,
-    xpEarned: number
-  ) {
-    if (!user) {
-      setError('You must be logged in to post a Rep.')
-      return
-    }
+  async function submitRep(type: 'progress' | 'pr' | 'checkin', payload: Record<string, unknown>, xp: number) {
+    if (!user) { setError('You must be logged in.'); return }
     setSubmitting(true)
     setError(null)
 
@@ -72,10 +100,7 @@ export default function RepPage() {
     const db = supabase as any
 
     const { error: insertError } = await db.from('reps').insert({
-      type,
-      user_id: user.id,
-      xp_earned: xpEarned,
-      ...payload,
+      type, user_id: user.id, xp_earned: xp, ...payload,
     })
 
     if (insertError) {
@@ -84,134 +109,57 @@ export default function RepPage() {
       return
     }
 
-    // Award XP
-    await db.rpc('increment_user_xp', { user_id: user.id, xp_amount: xpEarned }).catch(() => {
-      // Fallback: direct update if RPC not available
-      db.from('users')
-        .select('xp')
-        .eq('id', user.id)
-        .single()
-        .then(({ data }: { data: { xp: number } | null }) => {
-          const currentXp = data?.xp ?? 0
-          db.from('users').update({ xp: currentXp + xpEarned }).eq('id', user.id)
-        })
-    })
+    // Award XP — direct update
+    const { data: userData } = await db.from('users').select('xp').eq('id', user.id).single()
+    await db.from('users').update({ xp: (userData?.xp ?? 0) + xp }).eq('id', user.id)
 
-    router.push('/')
+    setSubmitting(false)
+    setPosted(true)
+    setTimeout(() => router.push('/'), 1200)
   }
 
   async function handleProgressSubmit(e: React.FormEvent) {
     e.preventDefault()
-    if (!progressPhotoFile) {
-      setError('Please select a photo.')
-      return
-    }
-    let photoUrl: string | null = null
-    if (progressPhotoFile) {
-      photoUrl = await uploadPhoto(progressPhotoFile)
-    }
-    await submitRep('progress', {
-      photo_url: photoUrl,
-      content: progressCaption || null,
-      visibility: progressVisibility,
-    }, XP_VALUES.progress)
+    if (!progressPhotoFile) { setError('Please select a photo.'); return }
+    const photoUrl = await uploadPhoto(progressPhotoFile)
+    if (!photoUrl) return
+    await submitRep('progress', { photo_url: photoUrl, content: progressCaption || null, visibility: progressVis }, XP_VALUES.progress)
   }
 
   async function handlePrSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!prExercise.trim()) { setError('Exercise name is required.'); return }
-    if (!prValue || isNaN(Number(prValue))) { setError('Weight/reps value is required.'); return }
+    if (!prValue || isNaN(Number(prValue))) { setError('Value is required.'); return }
     await submitRep('pr', {
-      pr_exercise: prExercise.trim(),
-      pr_value: Number(prValue),
-      pr_unit: prUnit,
-      content: prCaption || null,
-      visibility: prVisibility,
+      pr_exercise: prExercise.trim(), pr_value: Number(prValue),
+      pr_unit: prUnit, content: prCaption || null, visibility: prVis,
     }, XP_VALUES.pr)
   }
 
   async function handleCheckinSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!checkinGym.trim()) { setError('Gym name is required.'); return }
-    await submitRep('checkin', {
-      gym_name: checkinGym.trim(),
-      content: checkinNote || null,
-      visibility: checkinVisibility,
-    }, XP_VALUES.checkin)
+    await submitRep('checkin', { gym_name: checkinGym.trim(), content: checkinNote || null, visibility: checkinVis }, XP_VALUES.checkin)
   }
 
-  const cardStyle: React.CSSProperties = {
-    backgroundColor: 'var(--bg-card)',
-    border: '1px solid var(--border)',
-    borderRadius: 'var(--radius-md)',
-    padding: '20px',
-    cursor: 'pointer',
-    transition: 'border-color 0.15s, transform 0.15s',
-    display: 'flex',
-    alignItems: 'center',
-    gap: '16px',
-  }
+  const xpLabel = activeForm === 'progress' ? XP_VALUES.progress : activeForm === 'pr' ? XP_VALUES.pr : activeForm === 'checkin' ? XP_VALUES.checkin : 0
 
-  const xpBadgeStyle: React.CSSProperties = {
-    fontSize: '11px',
-    fontWeight: 700,
-    color: 'var(--accent)',
-    backgroundColor: 'var(--accent-dim)',
-    border: '1px solid color-mix(in srgb, var(--accent) 25%, transparent)',
-    borderRadius: '999px',
-    padding: '2px 8px',
-    marginLeft: 'auto',
-    flexShrink: 0,
+  // Success state
+  if (posted) {
+    return (
+      <div style={{ maxWidth: '480px', margin: '0 auto', padding: '80px 16px', textAlign: 'center' }}>
+        <div style={{ fontSize: '48px', marginBottom: '16px' }}>🔥</div>
+        <div style={{ fontSize: '22px', fontWeight: 900, color: 'var(--text)', marginBottom: '8px' }}>Rep posted!</div>
+        <div style={{ fontSize: '16px', fontWeight: 700, color: 'var(--accent)' }}>+{xpLabel} XP earned</div>
+      </div>
+    )
   }
-
-  const inputStyle: React.CSSProperties = {
-    width: '100%',
-    padding: '10px 12px',
-    backgroundColor: 'var(--bg-elevated)',
-    border: '1px solid var(--border)',
-    borderRadius: 'var(--radius-sm)',
-    color: 'var(--text)',
-    fontSize: '14px',
-    outline: 'none',
-    boxSizing: 'border-box',
-  }
-
-  const labelStyle: React.CSSProperties = {
-    display: 'block',
-    fontSize: '12px',
-    fontWeight: 600,
-    color: 'var(--text-dim)',
-    marginBottom: '6px',
-    textTransform: 'uppercase',
-    letterSpacing: '0.05em',
-  }
-
-  const visibilityToggleStyle = (selected: boolean): React.CSSProperties => ({
-    flex: 1,
-    padding: '8px',
-    textAlign: 'center',
-    fontSize: '13px',
-    fontWeight: 600,
-    borderRadius: 'var(--radius-sm)',
-    cursor: 'pointer',
-    border: 'none',
-    backgroundColor: selected ? 'var(--accent)' : 'var(--bg-elevated)',
-    color: selected ? '#000' : 'var(--text-dim)',
-    transition: 'background-color 0.15s',
-  })
 
   const submitBtnStyle: React.CSSProperties = {
-    width: '100%',
-    padding: '12px',
-    backgroundColor: 'var(--accent)',
-    color: '#000',
-    border: 'none',
-    borderRadius: 'var(--radius-md)',
-    fontSize: '14px',
-    fontWeight: 700,
-    cursor: submitting ? 'not-allowed' : 'pointer',
-    opacity: submitting ? 0.6 : 1,
-    marginTop: '8px',
+    ...btn, width: '100%', padding: '14px',
+    backgroundColor: (submitting || uploadingPhoto) ? 'var(--border)' : 'var(--accent)',
+    color: (submitting || uploadingPhoto) ? 'var(--text-dim)' : '#000',
+    borderRadius: 'var(--radius-md)', fontSize: '15px', fontWeight: 800, marginTop: '8px',
   }
 
   return (
@@ -219,36 +167,17 @@ export default function RepPage() {
 
       {/* Header */}
       <div style={{ marginBottom: '28px' }}>
-        {activeForm ? (
-          <button
-            onClick={() => { setActiveForm(null); setError(null) }}
-            style={{
-              background: 'none',
-              border: 'none',
-              color: 'var(--accent)',
-              fontSize: '13px',
-              fontWeight: 600,
-              cursor: 'pointer',
-              padding: '0 0 12px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '4px',
-            }}
-          >
+        {activeForm && (
+          <button onClick={() => { setActiveForm(null); setError(null) }} style={{
+            ...btn, background: 'none', color: 'var(--accent)',
+            fontSize: '13px', fontWeight: 600, padding: '0 0 12px',
+            display: 'flex', alignItems: 'center', gap: '4px',
+          }}>
             ← Back
           </button>
-        ) : null}
-        <h1 style={{
-          fontSize: '24px',
-          fontWeight: 900,
-          color: 'var(--text)',
-          margin: 0,
-          letterSpacing: '-0.02em',
-        }}>
-          {activeForm === 'progress' ? 'Progress Photo' :
-           activeForm === 'pr' ? 'Personal Record' :
-           activeForm === 'checkin' ? 'Check-in' :
-           'Post a Rep'}
+        )}
+        <h1 style={{ fontSize: '24px', fontWeight: 900, color: 'var(--text)', margin: 0, letterSpacing: '-0.02em' }}>
+          {activeForm === 'progress' ? 'Progress Photo' : activeForm === 'pr' ? 'Personal Record' : activeForm === 'checkin' ? 'Check-in' : 'Post a Rep'}
         </h1>
         {!activeForm && (
           <p style={{ margin: '6px 0 0', fontSize: '14px', color: 'var(--text-dim)' }}>
@@ -261,235 +190,119 @@ export default function RepPage() {
         <div style={{
           backgroundColor: 'color-mix(in srgb, var(--red) 12%, transparent)',
           border: '1px solid color-mix(in srgb, var(--red) 30%, transparent)',
-          borderRadius: 'var(--radius-sm)',
-          padding: '10px 14px',
-          fontSize: '13px',
-          color: 'var(--red)',
-          marginBottom: '16px',
+          borderRadius: 'var(--radius-sm)', padding: '10px 14px',
+          fontSize: '13px', color: 'var(--red)', marginBottom: '16px',
         }}>
           {error}
         </div>
       )}
 
-      {/* Hub cards — shown when no form is active */}
+      {/* Hub */}
       {!activeForm && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-
-          {/* Rate a Supplement */}
-          <Link
-            href="/browse"
-            style={{ textDecoration: 'none', color: 'inherit' }}
-          >
-            <div style={cardStyle}>
-              <span style={{ fontSize: '28px', flexShrink: 0 }}>⚡</span>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: '15px', fontWeight: 700, color: 'var(--text)', marginBottom: '3px' }}>
-                  Rate a Supplement
+          {[
+            { type: null, href: '/browse', icon: '⚡', title: 'Rate a Supplement', sub: 'Browse and rate a flavor', xp: XP_VALUES.rating },
+            { type: 'progress' as RepForm, icon: '📸', title: 'Progress Photo', sub: 'Show your gains', xp: XP_VALUES.progress },
+            { type: 'pr' as RepForm, icon: '🏋️', title: 'Personal Record', sub: 'Log a new PR', xp: XP_VALUES.pr },
+            { type: 'checkin' as RepForm, icon: '📍', title: 'Check-in', sub: 'Where are you training?', xp: XP_VALUES.checkin },
+          ].map((item) => {
+            const inner = (
+              <div style={{
+                backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)',
+                borderRadius: 'var(--radius-md)', padding: '18px 20px',
+                display: 'flex', alignItems: 'center', gap: '16px',
+                WebkitTapHighlightColor: 'transparent',
+              }}>
+                <span style={{ fontSize: '26px', flexShrink: 0 }}>{item.icon}</span>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontSize: '15px', fontWeight: 700, color: 'var(--text)', marginBottom: '2px' }}>{item.title}</div>
+                  <div style={{ fontSize: '12px', color: 'var(--text-dim)' }}>{item.sub}</div>
                 </div>
-                <div style={{ fontSize: '12px', color: 'var(--text-dim)' }}>
-                  Browse and rate a flavor
-                </div>
+                <span style={{
+                  fontSize: '11px', fontWeight: 700, color: 'var(--accent)',
+                  backgroundColor: 'var(--accent-dim)', borderRadius: '999px',
+                  padding: '3px 9px', flexShrink: 0,
+                  border: '1px solid color-mix(in srgb, var(--accent) 25%, transparent)',
+                }}>+{item.xp} XP</span>
               </div>
-              <span style={xpBadgeStyle}>+{XP_VALUES.rating} XP</span>
-            </div>
-          </Link>
-
-          {/* Progress Photo */}
-          <div style={cardStyle} onClick={() => setActiveForm('progress')}>
-            <span style={{ fontSize: '28px', flexShrink: 0 }}>📸</span>
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontSize: '15px', fontWeight: 700, color: 'var(--text)', marginBottom: '3px' }}>
-                Progress Photo
-              </div>
-              <div style={{ fontSize: '12px', color: 'var(--text-dim)' }}>
-                Show your gains
-              </div>
-            </div>
-            <span style={xpBadgeStyle}>+{XP_VALUES.progress} XP</span>
-          </div>
-
-          {/* Personal Record */}
-          <div style={cardStyle} onClick={() => setActiveForm('pr')}>
-            <span style={{ fontSize: '28px', flexShrink: 0 }}>🏋️</span>
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontSize: '15px', fontWeight: 700, color: 'var(--text)', marginBottom: '3px' }}>
-                Personal Record
-              </div>
-              <div style={{ fontSize: '12px', color: 'var(--text-dim)' }}>
-                Log a new PR
-              </div>
-            </div>
-            <span style={xpBadgeStyle}>+{XP_VALUES.pr} XP</span>
-          </div>
-
-          {/* Check-in */}
-          <div style={cardStyle} onClick={() => setActiveForm('checkin')}>
-            <span style={{ fontSize: '28px', flexShrink: 0 }}>📍</span>
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontSize: '15px', fontWeight: 700, color: 'var(--text)', marginBottom: '3px' }}>
-                Check-in
-              </div>
-              <div style={{ fontSize: '12px', color: 'var(--text-dim)' }}>
-                Where are you training?
-              </div>
-            </div>
-            <span style={xpBadgeStyle}>+{XP_VALUES.checkin} XP</span>
-          </div>
-
+            )
+            return item.href ? (
+              <Link key={item.title} href={item.href} style={{ textDecoration: 'none', color: 'inherit' }}>{inner}</Link>
+            ) : (
+              <div key={item.title} style={{ cursor: 'pointer' }} onClick={() => setActiveForm(item.type)}>{inner}</div>
+            )
+          })}
         </div>
       )}
 
       {/* Progress Photo Form */}
       {activeForm === 'progress' && (
-        <form onSubmit={handleProgressSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+        <form onSubmit={handleProgressSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
           <div>
             <label style={labelStyle}>Photo (required)</label>
-            <div
-              onClick={() => progressFileRef.current?.click()}
-              style={{
-                border: '2px dashed var(--border)',
-                borderRadius: 'var(--radius-md)',
-                padding: '24px',
-                textAlign: 'center',
-                cursor: 'pointer',
-                backgroundColor: 'var(--bg-elevated)',
-                transition: 'border-color 0.15s',
-              }}
-            >
+            <div onClick={() => progressFileRef.current?.click()} style={{
+              border: '2px dashed var(--border)', borderRadius: 'var(--radius-md)',
+              padding: '28px', textAlign: 'center', cursor: 'pointer',
+              backgroundColor: 'var(--bg-elevated)', WebkitTapHighlightColor: 'transparent',
+            }}>
               {progressPhotoPreview ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={progressPhotoPreview}
-                  alt="Preview"
-                  style={{ maxWidth: '100%', maxHeight: '200px', objectFit: 'cover', borderRadius: 'var(--radius-sm)', display: 'block', margin: '0 auto' }}
-                />
+                <img src={progressPhotoPreview} alt="Preview" style={{ maxWidth: '100%', maxHeight: '220px', objectFit: 'cover', borderRadius: 'var(--radius-sm)', display: 'block', margin: '0 auto' }} />
               ) : (
-                <div>
-                  <div style={{ fontSize: '28px', marginBottom: '8px' }}>📷</div>
+                <>
+                  <div style={{ fontSize: '32px', marginBottom: '8px' }}>📷</div>
                   <div style={{ fontSize: '13px', color: 'var(--text-dim)' }}>Tap to select a photo</div>
-                </div>
+                </>
               )}
             </div>
-            <input
-              ref={progressFileRef}
-              type="file"
-              accept="image/*"
-              style={{ display: 'none' }}
-              onChange={handleProgressPhoto}
-            />
+            <input ref={progressFileRef} type="file" accept="image/*" style={{ display: 'none' }}
+              onChange={(e) => { const f = e.target.files?.[0]; if (f) { setProgressPhotoFile(f); setProgressPhotoPreview(URL.createObjectURL(f)) } }} />
           </div>
-
           <div>
             <label style={labelStyle}>Caption (optional)</label>
-            <textarea
-              value={progressCaption}
-              onChange={(e) => setProgressCaption(e.target.value.slice(0, 280))}
-              placeholder="What&apos;s the story?"
-              rows={3}
-              style={{ ...inputStyle, resize: 'none' }}
-            />
-            <div style={{ fontSize: '11px', color: 'var(--text-faint)', textAlign: 'right', marginTop: '4px' }}>
-              {progressCaption.length}/280
-            </div>
+            <textarea value={progressCaption} onChange={(e) => setProgressCaption(e.target.value.slice(0, 280))}
+              placeholder="What's the story?" rows={3} style={{ ...inputStyle, resize: 'none', fontFamily: 'inherit' }} />
+            <div style={{ fontSize: '11px', color: 'var(--text-faint)', textAlign: 'right', marginTop: '4px' }}>{progressCaption.length}/280</div>
           </div>
-
-          <div>
-            <label style={labelStyle}>Visibility</label>
-            <div style={{ display: 'flex', gap: '8px', backgroundColor: 'var(--bg-elevated)', padding: '4px', borderRadius: 'var(--radius-sm)' }}>
-              <button type="button" style={visibilityToggleStyle(progressVisibility === 'public')} onClick={() => setProgressVisibility('public')}>
-                Public
-              </button>
-              <button type="button" style={visibilityToggleStyle(progressVisibility === 'followers')} onClick={() => setProgressVisibility('followers')}>
-                Followers only
-              </button>
-            </div>
-          </div>
-
-          <button type="submit" style={submitBtnStyle} disabled={submitting}>
-            {submitting ? 'Posting...' : `Post Rep · +${XP_VALUES.progress} XP`}
+          <VisPicker value={progressVis} onChange={setProgressVis} />
+          <button type="submit" style={submitBtnStyle} disabled={submitting || uploadingPhoto}>
+            {uploadingPhoto ? 'Uploading photo...' : submitting ? 'Posting...' : `Post Rep · +${XP_VALUES.progress} XP`}
           </button>
         </form>
       )}
 
       {/* PR Form */}
       {activeForm === 'pr' && (
-        <form onSubmit={handlePrSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+        <form onSubmit={handlePrSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
           <div>
             <label style={labelStyle}>Exercise (required)</label>
-            <input
-              type="text"
-              value={prExercise}
-              onChange={(e) => setPrExercise(e.target.value)}
-              placeholder="e.g. Bench Press, Squat..."
-              style={inputStyle}
-              required
-            />
+            <input type="text" value={prExercise} onChange={(e) => setPrExercise(e.target.value)}
+              placeholder="e.g. Bench Press, Squat..." style={inputStyle} />
           </div>
-
           <div>
             <label style={labelStyle}>Value (required)</label>
             <div style={{ display: 'flex', gap: '8px' }}>
-              <input
-                type="number"
-                value={prValue}
-                onChange={(e) => setPrValue(e.target.value)}
-                placeholder="0"
-                min="0"
-                step="any"
-                style={{ ...inputStyle, flex: 1 }}
-                required
-              />
+              <input type="number" value={prValue} onChange={(e) => setPrValue(e.target.value)}
+                placeholder="0" min="0" step="any" style={{ ...inputStyle, flex: 1 }} />
               <div style={{ display: 'flex', gap: '4px', backgroundColor: 'var(--bg-elevated)', padding: '4px', borderRadius: 'var(--radius-sm)', flexShrink: 0 }}>
                 {(['kg', 'lbs', 'reps'] as const).map((u) => (
-                  <button
-                    key={u}
-                    type="button"
-                    onClick={() => setPrUnit(u)}
-                    style={{
-                      padding: '6px 10px',
-                      borderRadius: 'var(--radius-sm)',
-                      border: 'none',
-                      fontSize: '12px',
-                      fontWeight: 600,
-                      cursor: 'pointer',
-                      backgroundColor: prUnit === u ? 'var(--accent)' : 'transparent',
-                      color: prUnit === u ? '#000' : 'var(--text-dim)',
-                      transition: 'background-color 0.15s',
-                    }}
-                  >
-                    {u}
-                  </button>
+                  <button key={u} type="button" onClick={() => setPrUnit(u)} style={{
+                    ...btn, padding: '7px 10px', borderRadius: 'var(--radius-sm)',
+                    fontSize: '12px', fontWeight: 600,
+                    backgroundColor: prUnit === u ? 'var(--accent)' : 'transparent',
+                    color: prUnit === u ? '#000' : 'var(--text-dim)',
+                  }}>{u}</button>
                 ))}
               </div>
             </div>
           </div>
-
           <div>
             <label style={labelStyle}>Caption (optional)</label>
-            <textarea
-              value={prCaption}
-              onChange={(e) => setPrCaption(e.target.value.slice(0, 280))}
-              placeholder="How did it feel?"
-              rows={3}
-              style={{ ...inputStyle, resize: 'none' }}
-            />
-            <div style={{ fontSize: '11px', color: 'var(--text-faint)', textAlign: 'right', marginTop: '4px' }}>
-              {prCaption.length}/280
-            </div>
+            <textarea value={prCaption} onChange={(e) => setPrCaption(e.target.value.slice(0, 280))}
+              placeholder="How did it feel?" rows={3} style={{ ...inputStyle, resize: 'none', fontFamily: 'inherit' }} />
+            <div style={{ fontSize: '11px', color: 'var(--text-faint)', textAlign: 'right', marginTop: '4px' }}>{prCaption.length}/280</div>
           </div>
-
-          <div>
-            <label style={labelStyle}>Visibility</label>
-            <div style={{ display: 'flex', gap: '8px', backgroundColor: 'var(--bg-elevated)', padding: '4px', borderRadius: 'var(--radius-sm)' }}>
-              <button type="button" style={visibilityToggleStyle(prVisibility === 'public')} onClick={() => setPrVisibility('public')}>
-                Public
-              </button>
-              <button type="button" style={visibilityToggleStyle(prVisibility === 'followers')} onClick={() => setPrVisibility('followers')}>
-                Followers only
-              </button>
-            </div>
-          </div>
-
+          <VisPicker value={prVis} onChange={setPrVis} />
           <button type="submit" style={submitBtnStyle} disabled={submitting}>
             {submitting ? 'Posting...' : `Post Rep · +${XP_VALUES.pr} XP`}
           </button>
@@ -498,45 +311,19 @@ export default function RepPage() {
 
       {/* Check-in Form */}
       {activeForm === 'checkin' && (
-        <form onSubmit={handleCheckinSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+        <form onSubmit={handleCheckinSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
           <div>
             <label style={labelStyle}>Gym name (required)</label>
-            <input
-              type="text"
-              value={checkinGym}
-              onChange={(e) => setCheckinGym(e.target.value)}
-              placeholder="e.g. Gold's Gym, Planet Fitness..."
-              style={inputStyle}
-              required
-            />
+            <input type="text" value={checkinGym} onChange={(e) => setCheckinGym(e.target.value)}
+              placeholder="e.g. Gold's Gym, World Class..." style={inputStyle} />
           </div>
-
           <div>
             <label style={labelStyle}>Note (optional)</label>
-            <textarea
-              value={checkinNote}
-              onChange={(e) => setCheckinNote(e.target.value.slice(0, 280))}
-              placeholder="How's the session going?"
-              rows={3}
-              style={{ ...inputStyle, resize: 'none' }}
-            />
-            <div style={{ fontSize: '11px', color: 'var(--text-faint)', textAlign: 'right', marginTop: '4px' }}>
-              {checkinNote.length}/280
-            </div>
+            <textarea value={checkinNote} onChange={(e) => setCheckinNote(e.target.value.slice(0, 280))}
+              placeholder="How's the session going?" rows={3} style={{ ...inputStyle, resize: 'none', fontFamily: 'inherit' }} />
+            <div style={{ fontSize: '11px', color: 'var(--text-faint)', textAlign: 'right', marginTop: '4px' }}>{checkinNote.length}/280</div>
           </div>
-
-          <div>
-            <label style={labelStyle}>Visibility</label>
-            <div style={{ display: 'flex', gap: '8px', backgroundColor: 'var(--bg-elevated)', padding: '4px', borderRadius: 'var(--radius-sm)' }}>
-              <button type="button" style={visibilityToggleStyle(checkinVisibility === 'public')} onClick={() => setCheckinVisibility('public')}>
-                Public
-              </button>
-              <button type="button" style={visibilityToggleStyle(checkinVisibility === 'followers')} onClick={() => setCheckinVisibility('followers')}>
-                Followers only
-              </button>
-            </div>
-          </div>
-
+          <VisPicker value={checkinVis} onChange={setCheckinVis} />
           <button type="submit" style={submitBtnStyle} disabled={submitting}>
             {submitting ? 'Posting...' : `Post Rep · +${XP_VALUES.checkin} XP`}
           </button>
