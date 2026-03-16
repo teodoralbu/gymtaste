@@ -127,6 +127,15 @@ export async function getFlavorBySlug(slug: string) {
       likedByMe.add(l.rating_id)
     }
   }
+  // Get sibling flavors from same product
+  const { data: siblingFlavors } = await (supabase as any)
+    .from('flavors')
+    .select('id, name, slug')
+    .eq('product_id', flavor.product_id)
+    .neq('id', flavor.id)
+    .order('name')
+    .limit(20)
+
   const avg =
     allRatings.length > 0
       ? allRatings.reduce((sum: number, r: any) => sum + r.overall_score, 0) / allRatings.length
@@ -137,6 +146,7 @@ export async function getFlavorBySlug(slug: string) {
       : null
 
   return {
+    siblingFlavors: (siblingFlavors ?? []) as { id: string; name: string; slug: string }[],
     flavor: {
       id: flavor.id as string,
       product_id: flavor.product_id as string,
@@ -247,4 +257,43 @@ export async function getProductsWithFlavors(categorySlug?: string) {
   const { data: products } = await query
 
   return (products ?? []) as (Product & { brands: Brand; categories: { name: string; slug: string; icon: string } })[]
+}
+
+// ─── Recent Ratings ──────────────────────────────────────────────────────────
+
+export async function getRecentRatings(limit = 20) {
+  const supabase = await createServerSupabaseClient()
+  const db = supabase as any
+
+  const { data: ratings } = await db
+    .from('ratings')
+    .select('id, overall_score, would_buy_again, review_text, created_at, flavor_id, user_id')
+    .order('created_at', { ascending: false })
+    .limit(limit)
+
+  if (!ratings || ratings.length === 0) return []
+
+  const flavorIds = ratings.map((r: any) => r.flavor_id)
+  const userIds = ratings.map((r: any) => r.user_id)
+
+  const [{ data: flavors }, { data: users }] = await Promise.all([
+    db.from('flavors').select('id, name, slug, product_id, products(name, slug, brands(name))').in('id', flavorIds),
+    db.from('users').select('id, username, avatar_url, badge_tier').in('id', userIds),
+  ])
+
+  const flavorMap: Record<string, any> = {}
+  for (const f of (flavors ?? []) as any[]) flavorMap[f.id] = f
+
+  const userMap: Record<string, any> = {}
+  for (const u of (users ?? []) as any[]) userMap[u.id] = u
+
+  return ratings.map((r: any) => ({
+    id: r.id as string,
+    overall_score: r.overall_score as number,
+    would_buy_again: r.would_buy_again as boolean,
+    review_text: r.review_text as string | null,
+    created_at: r.created_at as string,
+    flavor: flavorMap[r.flavor_id] ?? null,
+    user: userMap[r.user_id] ?? null,
+  }))
 }

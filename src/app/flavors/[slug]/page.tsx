@@ -3,9 +3,8 @@ export const dynamic = 'force-dynamic'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { getFlavorBySlug } from '@/lib/queries'
-import { getScoreColor, RATING_DIMENSIONS } from '@/lib/constants'
-import { Badge } from '@/components/ui/Badge'
-import { LikeButton } from '@/components/rating/LikeButton'
+import { getScoreColor } from '@/lib/constants'
+import { ReviewCard } from '@/components/rating/ReviewCard'
 
 interface Props {
   params: Promise<{ slug: string }>
@@ -17,12 +16,43 @@ export default async function FlavorPage({ params }: Props) {
 
   if (!data) notFound()
 
-  const { flavor, ratings } = data
+  const { flavor, ratings, siblingFlavors } = data
   const product = flavor.product
   const brand = (product as any).brands
 
   return (
     <div style={{ maxWidth: '800px', margin: '0 auto', padding: 'clamp(16px, 4vw, 40px) 16px 80px' }}>
+
+      {/* Sibling flavor picker */}
+      {siblingFlavors.length > 0 && (
+        <div className="flavor-scroll" style={{
+          display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '4px',
+          marginBottom: '20px', scrollbarWidth: 'none', msOverflowStyle: 'none',
+          WebkitOverflowScrolling: 'touch',
+        }}>
+          <style>{`.flavor-scroll::-webkit-scrollbar { display: none; }`}</style>
+          {siblingFlavors.map((f) => (
+            <Link
+              key={f.id}
+              href={`/flavors/${f.slug}`}
+              style={{
+                flexShrink: 0,
+                padding: '6px 14px',
+                borderRadius: '999px',
+                fontSize: '12px',
+                fontWeight: 600,
+                backgroundColor: 'var(--bg-elevated)',
+                border: '1px solid var(--border)',
+                color: 'var(--text-muted)',
+                textDecoration: 'none',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {f.name}
+            </Link>
+          ))}
+        </div>
+      )}
 
       {/* Breadcrumb */}
       <div style={{ fontSize: '13px', color: 'var(--text-dim)', marginBottom: '28px', display: 'flex', gap: '6px', alignItems: 'center', flexWrap: 'wrap' }}>
@@ -107,101 +137,7 @@ export default async function FlavorPage({ params }: Props) {
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
             {ratings.map((rating) => (
-              <div key={rating.id} className="card" style={{ padding: '20px 24px' }}>
-
-                {/* Header row */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '14px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    {/* Avatar */}
-                    <div style={{
-                      width: '40px', height: '40px', borderRadius: '50%', flexShrink: 0,
-                      background: `linear-gradient(135deg, var(--accent-glow), var(--bg-elevated))`,
-                      border: '1px solid var(--border)',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      fontSize: '15px', fontWeight: 800, color: 'var(--accent)',
-                      overflow: 'hidden',
-                    }}>
-                      {rating.user?.avatar_url ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img src={rating.user.avatar_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                      ) : (
-                        rating.user?.username?.[0]?.toUpperCase() ?? '?'
-                      )}
-                    </div>
-                    <div>
-                      <Link href={`/users/${rating.user?.username}`} style={{ fontWeight: 700, fontSize: '14px', color: 'var(--text)' }}>
-                        {rating.user?.username ?? 'Anonymous'}
-                      </Link>
-                      {rating.user?.badge_tier && (
-                        <div style={{ marginTop: '3px' }}>
-                          <Badge tier={rating.user.badge_tier} size="sm" />
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Score + WBA */}
-                  <div style={{ textAlign: 'right' }}>
-                    <div style={{ fontSize: '28px', fontWeight: 900, lineHeight: 1, color: getScoreColor(rating.overall_score) }}>
-                      {rating.overall_score.toFixed(1)}
-                    </div>
-                    {rating.would_buy_again && (
-                      <div style={{ fontSize: '11px', color: 'var(--green)', marginTop: '3px', fontWeight: 600 }}>
-                        ✓ WBA
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                {/* Dimension scores */}
-                <div style={{
-                  display: 'flex', gap: '8px', flexWrap: 'wrap',
-                  padding: '12px 0',
-                  borderTop: '1px solid var(--border-soft)',
-                  borderBottom: rating.review_text || (rating.context_tags?.length > 0) ? '1px solid var(--border-soft)' : 'none',
-                  marginBottom: rating.review_text || (rating.context_tags?.length > 0) ? '12px' : 0,
-                }}>
-                  {RATING_DIMENSIONS.map((dim) => {
-                    const score = (rating.scores as Record<string, number>)?.[dim.key]
-                    if (score === undefined) return null
-                    return (
-                      <div key={dim.key} style={{
-                        display: 'flex', alignItems: 'center', gap: '6px',
-                        backgroundColor: 'var(--bg-elevated)', borderRadius: '6px',
-                        padding: '5px 10px',
-                      }}>
-                        <span style={{ fontSize: '13px', fontWeight: 800, color: getScoreColor(score) }}>{score}</span>
-                        <span style={{ fontSize: '11px', color: 'var(--text-dim)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>{dim.label}</span>
-                      </div>
-                    )
-                  })}
-                </div>
-
-                {/* Review text */}
-                {rating.review_text && (
-                  <p style={{ color: 'var(--text-muted)', fontSize: '14px', lineHeight: 1.65, margin: '0 0 12px' }}>
-                    &ldquo;{rating.review_text}&rdquo;
-                  </p>
-                )}
-
-                {/* Context tags */}
-                {rating.context_tags && rating.context_tags.length > 0 && (
-                  <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginBottom: '12px' }}>
-                    {rating.context_tags.map((tag) => (
-                      <span key={tag} className="tag">{tag.replace(/_/g, ' ')}</span>
-                    ))}
-                  </div>
-                )}
-
-                {/* Like */}
-                <div style={{ paddingTop: '4px' }}>
-                  <LikeButton
-                    ratingId={rating.id}
-                    initialCount={(rating as any).like_count ?? 0}
-                    initialLiked={(rating as any).user_has_liked ?? false}
-                  />
-                </div>
-              </div>
+              <ReviewCard key={rating.id} rating={rating as any} />
             ))}
           </div>
         )}
