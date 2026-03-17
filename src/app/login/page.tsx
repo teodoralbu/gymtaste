@@ -32,6 +32,7 @@ function LoginForm() {
       setError(error)
     } else {
       router.push(redirect)
+      router.refresh()
     }
   }
 
