@@ -106,10 +106,10 @@ export default function SettingsPage() {
     e.target.value = ''
 
     const compressed = await compressAvatar(file)
-    const path = `${user.id}/avatar.jpg`
+    const path = `avatars/${user.id}/avatar.jpg`
 
     const { error: uploadError } = await supabase.storage
-      .from('avatars')
+      .from('review-photos')
       .upload(path, compressed, { upsert: true, contentType: 'image/jpeg' })
 
     if (uploadError) {
@@ -117,7 +117,7 @@ export default function SettingsPage() {
       return setError(uploadError.message)
     }
 
-    const { data: { publicUrl } } = supabase.storage.from('avatars').getPublicUrl(path)
+    const { data: { publicUrl } } = supabase.storage.from('review-photos').getPublicUrl(path)
     const urlWithBust = publicUrl + '?t=' + Date.now()
 
     const { error: updateError } = await supabase

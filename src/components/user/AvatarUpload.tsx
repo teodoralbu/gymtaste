@@ -43,14 +43,14 @@ export function AvatarUpload({ currentAvatarUrl, username, tierColor }: Props) {
     setUploading(true)
     const compressed = await compress(file)
     const supabase = createClient()
-    const path = `${user.id}/avatar.jpg`
+    const path = `avatars/${user.id}/avatar.jpg`
 
     const { error: uploadError } = await supabase.storage
-      .from('avatars')
+      .from('review-photos')
       .upload(path, compressed, { upsert: true, contentType: 'image/jpeg' })
 
     if (!uploadError) {
-      const { data: { publicUrl } } = supabase.storage.from('avatars').getPublicUrl(path)
+      const { data: { publicUrl } } = supabase.storage.from('review-photos').getPublicUrl(path)
       const urlWithBust = publicUrl + '?t=' + Date.now()
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { error: updateError } = await (supabase as any).from('users').update({ avatar_url: urlWithBust }).eq('id', user.id)
