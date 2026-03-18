@@ -1,4 +1,4 @@
-import { notFound } from 'next/navigation'
+import { notFound, redirect } from 'next/navigation'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
 import { RatingForm } from '@/components/rating/RatingForm'
 
@@ -9,6 +9,9 @@ interface Props {
 export default async function RatePage({ params }: Props) {
   const { slug } = await params
   const supabase = await createServerSupabaseClient()
+
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) redirect(`/login?redirect=/rate/${slug}`)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const db = supabase as any
 
