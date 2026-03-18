@@ -191,7 +191,13 @@ export function RatingForm({ flavor }: Props) {
       return
     }
 
-    router.push(`/rate/${flavor.slug}/success`)
+    const { count: totalRatings } = await db
+      .from('ratings')
+      .select('id', { count: 'exact', head: true })
+      .eq('user_id', user.id)
+    const isFirst = totalRatings === 1
+
+    router.push(`/rate/${flavor.slug}/success?score=${overall.toFixed(1)}${isFirst ? '&first=1' : ''}`)
     setSubmitting(false)
   }
 

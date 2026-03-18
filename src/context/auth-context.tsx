@@ -49,10 +49,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (_, session) => {
+    } = supabase.auth.onAuthStateChange((_, session) => {
       setUser(session?.user ?? null)
       if (session?.user) {
-        await fetchProfile(session.user.id)
+        // Non-blocking: profile may already be set by signIn pre-fetch
+        fetchProfile(session.user.id)
       } else {
         setProfile(null)
       }
@@ -63,7 +64,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [supabase, fetchProfile])
 
   const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({ email, password })
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password })
+    // Pre-fetch profile so it's ready before the page navigates
+    if (!error && data.user) await fetchProfile(data.user.id)
     return { error: error?.message ?? null }
   }
 

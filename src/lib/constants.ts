@@ -120,10 +120,21 @@ export function getBadgeTier(ratingCount: number): BadgeTier {
 }
 
 export const CONTEXT_TAGS = [
-  { value: 'empty_stomach', label: 'Empty stomach' },
-  { value: 'after_meal', label: 'After meal' },
+  // Workout type
+  { value: 'leg_day',       label: 'Leg day' },
+  { value: 'push_day',      label: 'Push day' },
+  { value: 'pull_day',      label: 'Pull day' },
+  { value: 'upper_body',    label: 'Upper body' },
+  { value: 'cardio',        label: 'Cardio' },
+  { value: 'full_body',     label: 'Full body' },
+  // Timing
+  { value: 'morning_session', label: 'Morning session' },
+  { value: 'evening_session', label: 'Evening session' },
+  { value: 'empty_stomach',   label: 'Empty stomach' },
+  { value: 'after_meal',      label: 'After meal' },
+  // Mix
   { value: 'mixed_with_water', label: 'Mixed with water' },
-  { value: 'mixed_with_milk', label: 'Mixed with milk' },
+  { value: 'mixed_with_milk',  label: 'Mixed with milk' },
   { value: 'mixed_with_juice', label: 'Mixed with juice' },
 ] as const
 

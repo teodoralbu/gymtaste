@@ -19,6 +19,8 @@ export interface FeedItem {
   comment_count?: number
   like_count?: number
   user_has_liked?: boolean
+  scores?: Record<string, number> | null
+  context_tags?: string[] | null
   flavor?: {
     name: string
     slug: string
@@ -63,6 +65,36 @@ interface FeedRating {
     avatar_url: string | null
     badge_tier: string
   } | null
+}
+
+const CONTEXT_TAG_LABELS: Record<string, string> = {
+  leg_day: 'Leg day', push_day: 'Push day', pull_day: 'Pull day',
+  upper_body: 'Upper body', cardio: 'Cardio', full_body: 'Full body',
+  morning_session: 'Morning session', evening_session: 'Evening session',
+  empty_stomach: 'Empty stomach', after_meal: 'After meal',
+  mixed_with_water: 'Mixed with water', mixed_with_milk: 'Mixed with milk',
+  mixed_with_juice: 'Mixed with juice',
+}
+
+function scoreWord(score: number): string {
+  if (score >= 9) return 'Amazing'
+  if (score >= 7.5) return 'Great'
+  if (score >= 6) return 'Decent'
+  return 'Weak'
+}
+
+function ExperienceLine({ scores, wba }: { scores: Record<string, number>; wba: boolean }) {
+  const parts: string[] = []
+  if (scores.taste != null)  parts.push(`Taste: ${scoreWord(scores.taste)}`)
+  if (scores.pump != null)   parts.push(`Pump: ${scoreWord(scores.pump)}`)
+  if (scores.energy != null) parts.push(`Energy: ${scoreWord(scores.energy)}`)
+  if (parts.length === 0) return null
+  return (
+    <div style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: wba ? '6px' : 0, lineHeight: 1.5 }}>
+      {parts.join(' · ')}
+      {wba && <span style={{ color: 'var(--green)', fontWeight: 700, marginLeft: '8px' }}>✓ Would buy again</span>}
+    </div>
+  )
 }
 
 function XpBadge({ xp }: { xp: number }) {
@@ -298,10 +330,35 @@ export function FeedCard({ rating, item, initialLiked = false, initialLikeCount 
         </div>
       </Link>
 
-      {/* Review text */}
+      {/* Experience line — auto-generated from scores */}
+      {ratingData.scores && (
+        <div style={{ padding: '0 16px 10px' }}>
+          <ExperienceLine scores={ratingData.scores} wba={ratingData.would_buy_again ?? false} />
+        </div>
+      )}
+
+      {/* Context tags */}
+      {ratingData.context_tags && ratingData.context_tags.length > 0 && (
+        <div style={{ padding: '0 16px 10px', display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+          {ratingData.context_tags.map((tag) => (
+            <span key={tag} style={{
+              fontSize: '11px', fontWeight: 600,
+              color: 'var(--text-faint)',
+              backgroundColor: 'var(--bg-elevated)',
+              border: '1px solid var(--border-soft)',
+              borderRadius: '999px',
+              padding: '3px 9px',
+            }}>
+              {CONTEXT_TAG_LABELS[tag] ?? tag}
+            </span>
+          ))}
+        </div>
+      )}
+
+      {/* Review note — secondary caption */}
       {ratingData.review_text && (
         <div style={{ padding: '0 16px 12px' }}>
-          <p style={{ margin: 0, fontSize: '14px', color: 'var(--text-muted)', lineHeight: 1.6, fontStyle: 'italic' }}>
+          <p style={{ margin: 0, fontSize: '13px', color: 'var(--text-dim)', lineHeight: 1.6 }}>
             &ldquo;{ratingData.review_text}&rdquo;
           </p>
         </div>

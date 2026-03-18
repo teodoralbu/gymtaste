@@ -117,7 +117,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ f
                 margin: '0 0 20px',
                 lineHeight: 1.6,
               }}>
-                Real lifters rate supplement flavors. No BS.
+                Discover what the fitness community actually thinks. Real experiences, real ratings.
               </p>
               <Link
                 href="/browse"
@@ -157,7 +157,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ f
                 textAlign: 'center',
                 border: '1px solid color-mix(in srgb, var(--accent) 20%, transparent)',
               }}>
-                Rate something today →
+                What did you take today? →
               </div>
             </Link>
           )}
@@ -246,7 +246,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ f
         <div>
           {/* Section title */}
           <div style={{ padding: '0 16px', marginBottom: '12px' }}>
-            <span style={{ fontSize: '17px', fontWeight: 800, color: 'var(--text)' }}>Latest Reviews</span>
+            <span style={{ fontSize: '17px', fontWeight: 800, color: 'var(--text)' }}>Community Feed</span>
           </div>
 
           {/* Segmented pill tabs */}
@@ -314,8 +314,8 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ f
             </div>
           ) : feedItems.length === 0 ? (
             <div style={{ padding: '40px 16px', textAlign: 'center' }}>
-              <p style={{ color: 'var(--text-dim)', fontSize: '14px', margin: '0 0 16px' }}>No reviews yet.</p>
-              <Link href="/browse" className="btn btn-primary" style={{ padding: '10px 20px', fontSize: '13px' }}>Browse products</Link>
+              <p style={{ color: 'var(--text-dim)', fontSize: '14px', margin: '0 0 16px' }}>No one&apos;s posted today. Be the first.</p>
+              <Link href="/rate" className="btn btn-primary" style={{ padding: '10px 20px', fontSize: '13px' }}>Log your session</Link>
             </div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column' }}>

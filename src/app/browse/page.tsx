@@ -105,6 +105,15 @@ export default async function BrowsePage({ searchParams }: BrowseProps) {
     })
   }
 
+  // Dark Horse: deterministic daily pick — underrated but high-scoring
+  const darkHorseCandidates = allProducts.filter(
+    (p) => p.avg_score !== null && p.avg_score >= 7.5 && p.rating_count >= 1 && p.rating_count <= 15
+  )
+  const dayOfYear = Math.floor(Date.now() / (1000 * 60 * 60 * 24))
+  const darkHorse = darkHorseCandidates.length > 0
+    ? darkHorseCandidates[dayOfYear % darkHorseCandidates.length]
+    : null
+
   return (
     <div>
 
@@ -206,6 +215,94 @@ export default async function BrowsePage({ searchParams }: BrowseProps) {
               )
             })}
           </div>
+        )}
+
+        {/* Dark Horse — daily underdog spotlight */}
+        {!query && !brand && darkHorse && (
+          <Link
+            href={`/products/${darkHorse.slug}`}
+            style={{ textDecoration: 'none', color: 'inherit', display: 'block', marginBottom: '16px' }}
+          >
+            <div style={{
+              backgroundColor: 'var(--bg-card)',
+              border: '1px solid var(--border)',
+              borderRadius: 'var(--radius-lg)',
+              padding: '14px 16px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px',
+              position: 'relative',
+              overflow: 'hidden',
+            }}>
+              {/* Subtle accent glow */}
+              <div style={{
+                position: 'absolute',
+                inset: 0,
+                background: 'linear-gradient(135deg, color-mix(in srgb, var(--accent) 4%, transparent), transparent 60%)',
+                pointerEvents: 'none',
+              }} />
+
+              {/* Label */}
+              <div style={{
+                position: 'absolute',
+                top: '10px',
+                right: '12px',
+                fontSize: '9px',
+                fontWeight: 800,
+                color: 'var(--accent)',
+                textTransform: 'uppercase',
+                letterSpacing: '0.1em',
+                backgroundColor: 'var(--accent-dim)',
+                padding: '2px 7px',
+                borderRadius: '999px',
+                border: '1px solid color-mix(in srgb, var(--accent) 25%, transparent)',
+              }}>
+                Dark Horse
+              </div>
+
+              {/* Product image */}
+              <div style={{
+                width: '52px', height: '52px', borderRadius: '12px', flexShrink: 0,
+                backgroundColor: 'var(--bg-elevated)', border: '1px solid var(--border-soft)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden',
+              }}>
+                {darkHorse.image_url ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={darkHorse.image_url} alt={darkHorse.name} loading="lazy" decoding="async"
+                    style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '4px' }} />
+                ) : (
+                  <span style={{ fontSize: '22px' }}>🐴</span>
+                )}
+              </div>
+
+              {/* Text */}
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontSize: '12px', color: 'var(--text-faint)', fontWeight: 600, marginBottom: '3px' }}>
+                  Today&apos;s sleeper pick
+                </div>
+                <div style={{
+                  fontSize: '15px', fontWeight: 800, color: 'var(--text)',
+                  overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                }}>
+                  {darkHorse.name}
+                </div>
+                <div style={{ fontSize: '12px', color: 'var(--text-dim)', marginTop: '2px' }}>
+                  {darkHorse.brand?.name} · {darkHorse.rating_count} rating{darkHorse.rating_count !== 1 ? 's' : ''}
+                </div>
+              </div>
+
+              {/* Score */}
+              <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                <div style={{
+                  fontSize: '24px', fontWeight: 900, lineHeight: 1,
+                  color: 'var(--accent)', letterSpacing: '-0.02em',
+                }}>
+                  {darkHorse.avg_score!.toFixed(1)}
+                </div>
+                <div style={{ fontSize: '10px', color: 'var(--text-faint)', marginTop: '2px' }}>score</div>
+              </div>
+            </div>
+          </Link>
         )}
 
         {/* No results */}

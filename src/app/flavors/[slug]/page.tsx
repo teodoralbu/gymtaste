@@ -36,6 +36,16 @@ export default async function FlavorPage({ params }: Props) {
   const product = flavor.product
   const brand = (product as any).brands
 
+  // Get ratings count from last 7 days
+  const supabase = await (await import('@/lib/supabase-server')).createServerSupabaseClient()
+  const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
+  const { count: weeklyCount } = await (supabase as any)
+    .from('ratings')
+    .select('id', { count: 'exact', head: true })
+    .eq('flavor_id', flavor.id)
+    .gte('created_at', sevenDaysAgo)
+  const thisWeekCount = weeklyCount ?? 0
+
   return (
     <div style={{ maxWidth: '800px', margin: '0 auto', padding: 'clamp(16px, 4vw, 40px) 16px', paddingBottom: 'max(96px, calc(96px + env(safe-area-inset-bottom)))' }}>
 
@@ -109,6 +119,24 @@ export default async function FlavorPage({ params }: Props) {
             <div style={{ fontSize: '13px', color: 'var(--text-dim)', marginTop: '6px' }}>
               {flavor.rating_count} {flavor.rating_count === 1 ? 'rating' : 'ratings'}
             </div>
+            {thisWeekCount > 0 && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '8px' }}>
+                <span
+                  className="soft-pulse"
+                  style={{
+                    width: '8px',
+                    height: '8px',
+                    borderRadius: '50%',
+                    backgroundColor: 'var(--accent)',
+                    flexShrink: 0,
+                    display: 'inline-block',
+                  }}
+                />
+                <span style={{ fontSize: '13px', color: 'var(--text-dim)', fontWeight: 600 }}>
+                  {thisWeekCount} rated this week
+                </span>
+              </div>
+            )}
           </div>
           {flavor.would_buy_again_pct !== null && (
             <div>

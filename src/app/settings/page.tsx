@@ -73,6 +73,26 @@ export default function SettingsPage() {
     }
   }
 
+  const compressAvatar = (file: File): Promise<File> =>
+    new Promise((resolve) => {
+      const img = new Image()
+      img.onload = () => {
+        const SIZE = 256
+        const canvas = document.createElement('canvas')
+        canvas.width = SIZE; canvas.height = SIZE
+        const ctx = canvas.getContext('2d')!
+        const min = Math.min(img.width, img.height)
+        const sx = (img.width - min) / 2
+        const sy = (img.height - min) / 2
+        ctx.drawImage(img, sx, sy, min, min, 0, 0, SIZE, SIZE)
+        canvas.toBlob(
+          (blob) => resolve(new File([blob!], 'avatar.jpg', { type: 'image/jpeg' })),
+          'image/jpeg', 0.88
+        )
+      }
+      img.src = URL.createObjectURL(file)
+    })
+
   const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
@@ -83,26 +103,26 @@ export default function SettingsPage() {
 
     setUploadingAvatar(true)
     setError('')
+    e.target.value = ''
 
-    const ext = file.name.split('.').pop()
-    const path = `${user.id}/avatar.${ext}`
+    const compressed = await compressAvatar(file)
+    const path = `${user.id}/avatar.jpg`
 
     const { error: uploadError } = await supabase.storage
       .from('avatars')
-      .upload(path, file, { upsert: true })
+      .upload(path, compressed, { upsert: true, contentType: 'image/jpeg' })
 
     if (uploadError) {
       setUploadingAvatar(false)
       return setError(uploadError.message)
     }
 
-    const {
-      data: { publicUrl },
-    } = supabase.storage.from('avatars').getPublicUrl(path)
+    const { data: { publicUrl } } = supabase.storage.from('avatars').getPublicUrl(path)
+    const urlWithBust = publicUrl + '?t=' + Date.now()
 
     const { error: updateError } = await supabase
       .from('users')
-      .update({ avatar_url: publicUrl })
+      .update({ avatar_url: urlWithBust })
       .eq('id', user.id)
 
     setUploadingAvatar(false)
@@ -136,7 +156,7 @@ export default function SettingsPage() {
                 className="w-full h-full object-cover"
               />
             ) : (
-              profile.username[0].toUpperCase()
+              profile.username?.[0]?.toUpperCase() ?? '?'
             )}
           </div>
           <div>

@@ -31,6 +31,7 @@ export function BottomNav() {
     touchAction: 'manipulation' as const,
     userSelect: 'none' as const,
     position: 'relative' as const,
+    transition: 'color 0.15s ease',
   })
 
   const labelStyle = (active: boolean) => ({
@@ -54,8 +55,12 @@ export function BottomNav() {
         paddingBottom: 'env(safe-area-inset-bottom)',
         display: 'flex',
         alignItems: 'stretch',
-        /* Allow the floating Rate button to overflow above */
         overflow: 'visible',
+        /* iOS Safari hardware acceleration — prevents jitter on scroll */
+        transform: 'translateZ(0)',
+        WebkitTransform: 'translateZ(0)',
+        willChange: 'transform',
+        WebkitBackfaceVisibility: 'hidden',
       }}
     >
       {/* Home */}

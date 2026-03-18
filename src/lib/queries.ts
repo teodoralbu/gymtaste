@@ -301,7 +301,7 @@ export async function getUnifiedFeed(limit = 30, userId?: string) {
 
   const { data: ratings } = await db
     .from('ratings')
-    .select('id, overall_score, would_buy_again, review_text, photo_url, created_at, flavor_id, user_id')
+    .select('id, overall_score, would_buy_again, review_text, photo_url, created_at, flavor_id, user_id, scores, context_tags')
     .order('created_at', { ascending: false })
     .limit(limit)
 
@@ -344,6 +344,8 @@ export async function getUnifiedFeed(limit = 30, userId?: string) {
     review_text: r.review_text as string | null,
     photo_url: r.photo_url as string | null,
     created_at: r.created_at as string,
+    scores: r.scores as Record<string, number> | null,
+    context_tags: r.context_tags as string[] | null,
     comment_count: commentCountMap[r.id] ?? 0,
     like_count: likeCountMap[r.id] ?? 0,
     user_has_liked: likedByMe.has(r.id),
@@ -363,7 +365,7 @@ export async function getFollowingUnifiedFeed(userId: string, limit = 30) {
 
   const { data: ratings } = await db
     .from('ratings')
-    .select('id, overall_score, would_buy_again, review_text, photo_url, created_at, flavor_id, user_id')
+    .select('id, overall_score, would_buy_again, review_text, photo_url, created_at, flavor_id, user_id, scores, context_tags')
     .in('user_id', followingIds)
     .order('created_at', { ascending: false })
     .limit(limit)
@@ -407,6 +409,8 @@ export async function getFollowingUnifiedFeed(userId: string, limit = 30) {
     review_text: r.review_text as string | null,
     photo_url: r.photo_url as string | null,
     created_at: r.created_at as string,
+    scores: r.scores as Record<string, number> | null,
+    context_tags: r.context_tags as string[] | null,
     comment_count: commentCountMap[r.id] ?? 0,
     like_count: likeCountMap[r.id] ?? 0,
     user_has_liked: likedByMe.has(r.id),
