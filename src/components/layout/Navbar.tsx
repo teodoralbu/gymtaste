@@ -59,7 +59,7 @@ export function Navbar() {
           <Link
             href="/browse"
             aria-label="Search"
-            className="sm:hidden w-9 h-9 flex items-center justify-center rounded-full hover:bg-[#1E1E1E] transition-colors"
+            className="sm:hidden min-w-11 min-h-11 flex items-center justify-center rounded-full hover:bg-[#1E1E1E] transition-colors"
             style={{ color: 'var(--text-faint)' }}
           >
             <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -71,7 +71,7 @@ export function Navbar() {
           <Link
             href="/notifications"
             aria-label="Notifications"
-            className="sm:hidden w-9 h-9 flex items-center justify-center rounded-full hover:bg-[#1E1E1E] transition-colors"
+            className="sm:hidden min-w-11 min-h-11 flex items-center justify-center rounded-full hover:bg-[#1E1E1E] transition-colors"
             style={{ color: 'var(--text-faint)' }}
           >
             <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -87,7 +87,7 @@ export function Navbar() {
             <div className="relative" ref={menuRef}>
               <button
                 onClick={() => setMenuOpen(!menuOpen)}
-                className="flex items-center gap-2 py-1 px-2 rounded-lg hover:bg-[#1E1E1E] transition-colors"
+                className="flex items-center gap-2 py-1 px-2 rounded-lg min-h-11 hover:bg-[#1E1E1E] transition-colors"
               >
                 <div className="w-8 h-8 rounded-full bg-[#1E1E1E] border border-[#2A2A2A] overflow-hidden flex items-center justify-center text-sm font-bold text-[#00B4FF] flex-shrink-0">
                   {profile.avatar_url ? (

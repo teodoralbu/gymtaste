@@ -10,8 +10,8 @@ export function ThemeToggle() {
       onClick={toggle}
       aria-label="Toggle theme"
       style={{
-        width: '36px',
-        height: '36px',
+        width: '44px',
+        height: '44px',
         borderRadius: '50%',
         border: '1px solid var(--border)',
         backgroundColor: 'var(--bg-elevated)',
