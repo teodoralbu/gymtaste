@@ -140,7 +140,7 @@ export default function SettingsPage() {
   }
 
   return (
-    <PageContainer className="py-12" narrow>
+    <PageContainer className="pt-12 pb-24" narrow>
       <h1 className="text-2xl font-black mb-8">Settings</h1>
 
       {/* Avatar */}
@@ -165,6 +165,7 @@ export default function SettingsPage() {
               size="sm"
               loading={uploadingAvatar}
               onClick={() => fileInputRef.current?.click()}
+              className="min-h-11"
             >
               Upload photo
             </Button>
