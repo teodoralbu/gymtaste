@@ -15,6 +15,7 @@ export function AvatarUpload({ currentAvatarUrl, username, tierColor }: Props) {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [avatarUrl, setAvatarUrl] = useState(currentAvatarUrl)
   const [uploading, setUploading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const compress = (file: File): Promise<File> =>
     new Promise((resolve) => {
@@ -39,6 +40,18 @@ export function AvatarUpload({ currentAvatarUrl, username, tierColor }: Props) {
   const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file || !user) return
+
+    setError(null)
+    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+      setError('Only JPG, PNG, or WebP files are allowed.')
+      e.target.value = ''
+      return
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      setError('File must be under 5MB.')
+      e.target.value = ''
+      return
+    }
 
     setUploading(true)
     const compressed = await compress(file)
@@ -109,6 +122,21 @@ export function AvatarUpload({ currentAvatarUrl, username, tierColor }: Props) {
           </svg>
         )}
       </div>
+
+      {error && (
+        <p style={{
+          position: 'absolute',
+          bottom: '-20px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          fontSize: '10px',
+          color: 'var(--red, #ef4444)',
+          whiteSpace: 'nowrap',
+          fontWeight: 600,
+        }}>
+          {error}
+        </p>
+      )}
 
       <input ref={fileInputRef} type="file" accept="image/jpeg,image/png,image/webp" style={{ display: 'none' }} onChange={handleFile} />
 
