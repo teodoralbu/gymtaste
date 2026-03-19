@@ -146,6 +146,7 @@ export function RatingForm({ flavor }: Props) {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
+    if (submitting) return
     if (!user) {
       router.push(`/login?redirect=/rate/${flavor.slug}`)
       return
@@ -173,6 +174,13 @@ export function RatingForm({ flavor }: Props) {
       }
     }
 
+    // Check isFirst BEFORE insert to avoid read-after-write latency issues
+    const { count: existingCount } = await db
+      .from('ratings')
+      .select('id', { count: 'exact', head: true })
+      .eq('user_id', user.id)
+    const isFirst = existingCount === 0
+
     const { error: insertError } = await db.from('ratings').insert({
       user_id: user.id,
       flavor_id: flavor.id,
@@ -190,12 +198,6 @@ export function RatingForm({ flavor }: Props) {
       setSubmitting(false)
       return
     }
-
-    const { count: totalRatings } = await db
-      .from('ratings')
-      .select('id', { count: 'exact', head: true })
-      .eq('user_id', user.id)
-    const isFirst = totalRatings === 1
 
     router.push(`/rate/${flavor.slug}/success?score=${overall.toFixed(1)}${isFirst ? '&first=1' : ''}`)
     setSubmitting(false)
