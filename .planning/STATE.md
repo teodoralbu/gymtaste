@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 02-01-PLAN.md
-last_updated: "2026-03-19T15:02:35.504Z"
+stopped_at: Completed 02-02-PLAN.md
+last_updated: "2026-03-19T15:04:37.698Z"
 last_activity: 2026-03-18 — Completed 01-02 (Feed card overflow + rating form mobile fixes)
 progress:
   total_phases: 4
   completed_phases: 1
   total_plans: 7
-  completed_plans: 4
+  completed_plans: 6
   percent: 33
 ---
 
@@ -53,6 +53,8 @@ Progress: [███░░░░░░░] 33%
 | Phase 01 P02 | 1min | 2 tasks | 2 files |
 | Phase 01 P01 | 2min | 3 tasks | 7 files |
 | Phase 02-bug-hunt-fixes P01 | 2min | 2 tasks | 2 files |
+| Phase 02-bug-hunt-fixes P03 | 2 | 2 tasks | 2 files |
+| Phase 02-bug-hunt-fixes P02 | 4min | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -69,6 +71,11 @@ Recent decisions affecting current work:
 - [Phase 01]: Used min-w/min-h instead of w/h for touch targets to set floor without preventing growth
 - [Phase 02-bug-hunt-fixes]: Used direct createServerClient in middleware (not helper) — middleware needs NextRequest cookie access to properly write response cookies
 - [Phase 02-bug-hunt-fixes]: router.refresh() placed after router.push('/') in handleSignOut to invalidate SSR cache on logout
+- [Phase 02-bug-hunt-fixes]: Mirror LikeButton optimistic pattern for FollowButton — wasFollowing revert-on-error with toast
+- [Phase 02-bug-hunt-fixes]: onCommentPosted optional prop in CommentBottomSheet threads count increment from parent CommentsSection
+- [Phase 02-bug-hunt-fixes]: Check existingCount === 0 pre-insert rather than totalRatings === 1 post-insert to avoid read-after-write timing issue
+- [Phase 02-bug-hunt-fixes]: Place if (submitting) return as first guard in handleSubmit before user auth check and any async work
+- [Phase 02-bug-hunt-fixes]: Cast Supabase join result to | null in success page to surface runtime nullability hidden by TypeScript type
 
 ### Pending Todos
 
@@ -81,6 +88,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-19T15:02:35.501Z
-Stopped at: Completed 02-01-PLAN.md
+Last session: 2026-03-19T15:04:37.695Z
+Stopped at: Completed 02-02-PLAN.md
 Resume file: None
