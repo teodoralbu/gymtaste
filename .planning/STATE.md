@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 02-02-PLAN.md
-last_updated: "2026-03-19T15:04:37.698Z"
+stopped_at: "Checkpoint: Task 2 (02-04) human-verify — BUG-01/02 end-to-end audit"
+last_updated: "2026-03-19T15:09:25.616Z"
 last_activity: 2026-03-18 — Completed 01-02 (Feed card overflow + rating form mobile fixes)
 progress:
   total_phases: 4
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 7
-  completed_plans: 6
+  completed_plans: 7
   percent: 33
 ---
 
@@ -55,6 +55,7 @@ Progress: [███░░░░░░░] 33%
 | Phase 02-bug-hunt-fixes P01 | 2min | 2 tasks | 2 files |
 | Phase 02-bug-hunt-fixes P03 | 2 | 2 tasks | 2 files |
 | Phase 02-bug-hunt-fixes P02 | 4min | 2 tasks | 2 files |
+| Phase 02-bug-hunt-fixes P04 | 5 | 1 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -76,6 +77,8 @@ Recent decisions affecting current work:
 - [Phase 02-bug-hunt-fixes]: Check existingCount === 0 pre-insert rather than totalRatings === 1 post-insert to avoid read-after-write timing issue
 - [Phase 02-bug-hunt-fixes]: Place if (submitting) return as first guard in handleSubmit before user auth check and any async work
 - [Phase 02-bug-hunt-fixes]: Cast Supabase join result to | null in success page to surface runtime nullability hidden by TypeScript type
+- [Phase 02-bug-hunt-fixes]: Mirror Settings page MIME validation pattern exactly in AvatarUpload — same jpeg/png/webp allowlist and 5MB cap before compress
+- [Phase 02-bug-hunt-fixes]: AvatarUpload error shown as absolute-positioned 10px paragraph below avatar circle (bottom: -20px) for compact inline feedback
 
 ### Pending Todos
 
@@ -88,6 +91,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-19T15:04:37.695Z
-Stopped at: Completed 02-02-PLAN.md
+Last session: 2026-03-19T15:09:25.614Z
+Stopped at: Checkpoint: Task 2 (02-04) human-verify — BUG-01/02 end-to-end audit
 Resume file: None
