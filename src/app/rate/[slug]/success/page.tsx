@@ -33,8 +33,8 @@ export default async function RateSuccessPage({ params, searchParams }: Props) {
   if (!data) notFound()
 
   const { flavor } = data
-  const product = flavor.product
-  const brand = (product as any).brands
+  const product = flavor.product as (typeof flavor.product & { brands?: { name: string } | null }) | null
+  const brand = (product as any)?.brands ?? null
 
   const userScore = scoreParam ? parseFloat(scoreParam) : null
   const verdict = userScore !== null && !isNaN(userScore) ? getVerdict(userScore) : null
@@ -135,7 +135,7 @@ export default async function RateSuccessPage({ params, searchParams }: Props) {
         >
           {flavor.name}
         </p>
-        {brand?.name && (
+        {(brand?.name || product?.name) && (
           <p
             style={{
               color: 'var(--text-dim)',
@@ -144,7 +144,7 @@ export default async function RateSuccessPage({ params, searchParams }: Props) {
               fontWeight: 600,
             }}
           >
-            {brand.name} · {product.name}
+            {brand?.name ? `${brand.name} · ` : ''}{product?.name ?? ''}
           </p>
         )}
       </div>
