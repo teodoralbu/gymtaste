@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
 import { useAuth } from '@/context/auth-context'
+import { useToast } from '@/context/ToastContext'
 
 interface Props {
   targetUserId: string
@@ -13,6 +14,7 @@ interface Props {
 export function FollowButton({ targetUserId, initialFollowing }: Props) {
   const { user } = useAuth()
   const router = useRouter()
+  const { showToast } = useToast()
   const [following, setFollowing] = useState(initialFollowing)
   const [loading, setLoading] = useState(false)
 
@@ -23,23 +25,36 @@ export function FollowButton({ targetUserId, initialFollowing }: Props) {
       router.push('/login')
       return
     }
+    if (loading) return
 
+    // Optimistic update
+    const wasFollowing = following
+    setFollowing(!following)
     setLoading(true)
+
     const supabase = createClient()
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const db = supabase as any
 
-    if (following) {
-      await db.from('follows').delete()
+    if (wasFollowing) {
+      const { error } = await db
+        .from('follows')
+        .delete()
         .eq('follower_id', user.id)
         .eq('following_id', targetUserId)
-      setFollowing(false)
+      if (error) {
+        setFollowing(wasFollowing)
+        showToast('Could not unfollow. Try again.')
+      }
     } else {
-      await db.from('follows').insert({
+      const { error } = await db.from('follows').insert({
         follower_id: user.id,
         following_id: targetUserId,
       })
-      setFollowing(true)
+      if (error) {
+        setFollowing(wasFollowing)
+        showToast('Could not follow. Try again.')
+      }
     }
 
     setLoading(false)
