@@ -49,10 +49,10 @@ Plans:
 **Plans**: 4 plans
 
 Plans:
-- [ ] 02-01-PLAN.md — Add Supabase session-refresh middleware + fix logout router.refresh (BUG-03)
-- [ ] 02-02-PLAN.md — Fix isFirst rating detection (pre-insert count) + duplicate submit guard (BUG-04)
-- [ ] 02-03-PLAN.md — Fix comment count stale bug + FollowButton optimistic update (BUG-05)
-- [ ] 02-04-PLAN.md — Add AvatarUpload file validation + end-to-end audit checkpoint (BUG-01, BUG-02, BUG-06)
+- [x] 02-01-PLAN.md — Add Supabase session-refresh middleware + fix logout router.refresh (BUG-03)
+- [x] 02-02-PLAN.md — Fix isFirst rating detection (pre-insert count) + duplicate submit guard (BUG-04)
+- [x] 02-03-PLAN.md — Fix comment count stale bug + FollowButton optimistic update (BUG-05)
+- [x] 02-04-PLAN.md — Add AvatarUpload file validation + end-to-end audit checkpoint (BUG-01, BUG-02, BUG-06)
 
 ### Phase 3: Performance
 **Goal**: Pages load quickly and the app handles growing data without degradation
@@ -92,7 +92,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Mobile UX | 2/3 | In Progress|  |
-| 2. Bug Hunt & Fixes | 2/4 | In Progress|  |
+| 1. Mobile UX | 2/3 | In Progress |  |
+| 2. Bug Hunt & Fixes | 4/4 | Complete | 2026-03-19 |
 | 3. Performance | 0/0 | Not started | - |
 | 4. Quality & Accessibility | 0/0 | Not started | - |

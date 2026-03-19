@@ -16,8 +16,8 @@
 
 ### Bug Hunt & Fixes
 
-- [ ] **BUG-01**: Systematically audit all user-facing flows for broken behavior (auth, rating, feed, profile, comments, likes, follow)
-- [ ] **BUG-02**: Fix all broken flows discovered in audit — each bug documented and resolved
+- [x] **BUG-01**: Systematically audit all user-facing flows for broken behavior (auth, rating, feed, profile, comments, likes, follow)
+- [x] **BUG-02**: Fix all broken flows discovered in audit — each bug documented and resolved
 - [x] **BUG-03**: Auth flow works correctly end-to-end on mobile (login, signup, session persistence, logout)
 - [x] **BUG-04**: Rating submission flow completes without errors and shows correct success state
 - [x] **BUG-05**: Comment and like actions work reliably without stale state or UI glitches
@@ -86,8 +86,8 @@
 | MOB-04 | Phase 1 | Pending |
 | MOB-05 | Phase 1 | Pending |
 | MOB-06 | Phase 1 | Complete |
-| BUG-01 | Phase 2 | Pending |
-| BUG-02 | Phase 2 | Pending |
+| BUG-01 | Phase 2 | Complete |
+| BUG-02 | Phase 2 | Complete |
 | BUG-03 | Phase 2 | Complete |
 | BUG-04 | Phase 2 | Complete |
 | BUG-05 | Phase 2 | Complete |
@@ -113,4 +113,4 @@
 
 ---
 *Requirements defined: 2026-03-18*
-*Last updated: 2026-03-18 after initial definition*
+*Last updated: 2026-03-19 — BUG-01, BUG-02 marked complete after end-to-end audit sign-off (02-04)*
