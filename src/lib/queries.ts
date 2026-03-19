@@ -80,55 +80,34 @@ export async function getFlavorBySlug(slug: string) {
 
   if (!flavor) return null
 
-  const { data: ratingsRaw } = await db
-    .from('ratings')
-    .select('*')
-    .eq('flavor_id', flavor.id)
-    .order('created_at', { ascending: false })
-    .limit(20)
+  // Batch 1: ratings, siblings, and auth can all run in parallel (depend only on flavor)
+  const [{ data: ratingsRaw }, { data: siblingFlavors }, { data: { user: currentUser } }] = await Promise.all([
+    db.from('ratings').select('*').eq('flavor_id', flavor.id).order('created_at', { ascending: false }).limit(20),
+    db.from('flavors').select('id, name, slug').eq('product_id', flavor.product_id).neq('id', flavor.id).order('name').limit(20),
+    supabase.auth.getUser(),
+  ])
 
   const allRatings = (ratingsRaw ?? []) as any[]
-
   const userIds = [...new Set(allRatings.map((r: any) => r.user_id))]
-  const userMap: Record<string, any> = {}
-  if (userIds.length > 0) {
-    const { data: users } = await db
-      .from('users')
-      .select('id, username, badge_tier, avatar_url')
-      .in('id', userIds)
-    for (const u of (users ?? []) as any[]) userMap[u.id] = u
-  }
-
   const ratingIds = allRatings.map((r: any) => r.id)
+
+  // Batch 2: users, likes, and myLikes can all run in parallel (depend on ratingsRaw)
+  const [usersResult, likesResult, myLikesResult] = await Promise.all([
+    userIds.length > 0 ? db.from('users').select('id, username, badge_tier, avatar_url').in('id', userIds) : Promise.resolve({ data: [] }),
+    ratingIds.length > 0 ? db.from('review_likes').select('rating_id').in('rating_id', ratingIds) : Promise.resolve({ data: [] }),
+    currentUser && ratingIds.length > 0 ? db.from('review_likes').select('rating_id').eq('user_id', currentUser.id).in('rating_id', ratingIds) : Promise.resolve({ data: [] }),
+  ])
+
+  const userMap: Record<string, any> = {}
+  for (const u of (usersResult.data ?? []) as any[]) userMap[u.id] = u
+
   const likeCountMap: Record<string, number> = {}
-  if (ratingIds.length > 0) {
-    const { data: likes } = await db
-      .from('review_likes')
-      .select('rating_id')
-      .in('rating_id', ratingIds)
-    for (const l of (likes ?? []) as any[]) {
-      likeCountMap[l.rating_id] = (likeCountMap[l.rating_id] ?? 0) + 1
-    }
+  for (const l of (likesResult.data ?? []) as any[]) {
+    likeCountMap[l.rating_id] = (likeCountMap[l.rating_id] ?? 0) + 1
   }
 
-  const { data: { user: currentUser } } = await supabase.auth.getUser()
   const likedByMe = new Set<string>()
-  if (currentUser && ratingIds.length > 0) {
-    const { data: myLikes } = await db
-      .from('review_likes')
-      .select('rating_id')
-      .eq('user_id', currentUser.id)
-      .in('rating_id', ratingIds)
-    for (const l of (myLikes ?? []) as any[]) likedByMe.add(l.rating_id)
-  }
-
-  const { data: siblingFlavors } = await (supabase as any)
-    .from('flavors')
-    .select('id, name, slug')
-    .eq('product_id', flavor.product_id)
-    .neq('id', flavor.id)
-    .order('name')
-    .limit(20)
+  for (const l of (myLikesResult.data ?? []) as any[]) likedByMe.add(l.rating_id)
 
   const avg =
     allRatings.length > 0
