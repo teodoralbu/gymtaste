@@ -128,6 +128,7 @@ export function RatingForm({ flavor }: Props) {
   const [error, setError] = useState<string | null>(null)
   const [photoFile, setPhotoFile] = useState<File | null>(null)
   const [photoPreview, setPhotoPreview] = useState<string | null>(null)
+  const [photoError, setPhotoError] = useState<string | null>(null)
 
   const overall = calcOverall(scores)
   const scoreColor = getScoreColor(overall)
@@ -407,7 +408,7 @@ export function RatingForm({ flavor }: Props) {
               <img src={photoPreview} alt="Preview" style={{ width: '100%', borderRadius: '10px', maxHeight: '200px', objectFit: 'cover' }} />
               <button
                 type="button"
-                onClick={() => { setPhotoFile(null); setPhotoPreview(null) }}
+                onClick={() => { setPhotoFile(null); setPhotoPreview(null); setPhotoError(null) }}
                 style={{
                   position: 'absolute', top: '8px', right: '8px',
                   width: '44px', height: '44px', borderRadius: '50%',
@@ -435,16 +436,36 @@ export function RatingForm({ flavor }: Props) {
                 style={{ display: 'none' }}
                 onChange={(e) => {
                   const file = e.target.files?.[0]
-                  if (file) {
-                    setPhotoFile(file)
-                    setPhotoPreview((prev) => {
-                      if (prev) URL.revokeObjectURL(prev)
-                      return URL.createObjectURL(file)
-                    })
+                  if (!file) return
+                  setPhotoError(null)
+                  if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+                    setPhotoError('Only JPG, PNG, or WebP files are allowed.')
+                    e.target.value = ''
+                    return
                   }
+                  if (file.size > 5 * 1024 * 1024) {
+                    setPhotoError('File must be under 5MB.')
+                    e.target.value = ''
+                    return
+                  }
+                  setPhotoFile(file)
+                  setPhotoPreview((prev) => {
+                    if (prev) URL.revokeObjectURL(prev)
+                    return URL.createObjectURL(file)
+                  })
                 }}
               />
             </label>
+          )}
+          {photoError && (
+            <p style={{
+              color: 'var(--red)',
+              fontSize: '12px',
+              marginTop: '8px',
+              fontWeight: 500,
+            }}>
+              {photoError}
+            </p>
           )}
         </Section>
 
