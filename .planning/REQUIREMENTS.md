@@ -99,9 +99,9 @@
 | PERF-05 | Phase 3 | Complete |
 | QUAL-01 | Phase 4 | Pending |
 | QUAL-02 | Phase 4 | Pending |
-| QUAL-03 | Phase 4 | Pending |
+| QUAL-03 | Phase 5 | Pending |
 | UX-01 | Phase 4 | Complete |
-| UX-02 | Phase 4 | Pending |
+| UX-02 | Phase 5 | Pending |
 | UX-03 | Phase 4 | Complete |
 | UX-04 | Phase 4 | Complete |
 | UX-05 | Phase 4 | Complete |

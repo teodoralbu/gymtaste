@@ -16,6 +16,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [ ] **Phase 2: Bug Hunt & Fixes** - All user-facing flows work correctly end-to-end
 - [ ] **Phase 3: Performance** - Pages load fast with efficient queries and proper pagination
 - [ ] **Phase 4: Quality & Accessibility** - Code is type-safe, errors are handled, and the app is accessible
+- [ ] **Phase 5: Security & Accessibility Polish** - RatingForm upload validation, descriptive alt text, and pagination loading UX
 
 ## Phase Details
 
@@ -88,14 +89,29 @@ Plans:
 - [ ] 04-03-PLAN.md — Keyboard focus, WCAG AA contrast audit, and text-faint cleanup (UX-01, UX-03)
 - [ ] 04-04-PLAN.md — Image alt text and aria-hidden audit across all components (UX-02)
 
+### Phase 5: Security & Accessibility Polish
+**Goal**: Close three audit gaps before launch — file upload security on RatingForm, descriptive alt text on feed review photos, and a skeleton loading state for infinite scroll pagination
+**Depends on**: Phase 4
+**Requirements**: QUAL-03 (gap), UX-02 (gap), UX-05 (gap)
+**Gap Closure**: Closes gaps from v1.0-MILESTONE-AUDIT.md
+**Success Criteria** (what must be TRUE):
+  1. Uploading a non-image or oversized file via the RatingForm photo input is rejected with a clear inline error — same guard as AvatarUpload
+  2. Feed cards show descriptive alt text on review photos (e.g. "Double Rich Chocolate review photo") instead of generic "Review photo"
+  3. Scrolling to the bottom of the feed shows skeleton card placeholders while more items load — not just "Loading more..." text
+**Plans**: 1 plan
+
+Plans:
+- [ ] 05-01-PLAN.md — RatingForm upload guard, FeedCard review photo alt text, FeedList skeleton pagination
+
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 → 2 → 3 → 4
+Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Mobile UX | 2/3 | In Progress |  |
+| 1. Mobile UX | 3/3 | Complete | 2026-03-18 |
 | 2. Bug Hunt & Fixes | 4/4 | Complete | 2026-03-19 |
-| 3. Performance | 0/3 | Not started | - |
-| 4. Quality & Accessibility | 0/4 | Not started | - |
+| 3. Performance | 3/3 | Complete | 2026-03-19 |
+| 4. Quality & Accessibility | 4/4 | Complete | 2026-03-21 |
+| 5. Security & Accessibility Polish | 0/1 | Not started | - |
