@@ -4,6 +4,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
 import { timeAgo } from '@/lib/timeAgo'
+import type { RatingIdFlavorId, UserBasicRow, FlavorBasicRow } from '@/lib/types'
 
 interface NotificationItem {
   id: string
@@ -16,83 +17,91 @@ interface NotificationItem {
   comment_preview?: string
 }
 
+interface LikeRow { user_id: string; created_at: string; rating_id: string }
+interface CommentRow { id: string; created_at: string; text: string; user_id: string; rating_id: string }
+interface FollowRow { follower_id: string; created_at: string }
+
 async function getNotifications(userId: string): Promise<NotificationItem[]> {
   const supabase = await createServerSupabaseClient()
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const db = supabase as any
 
   // Step 1: get this user's rating IDs + their flavor IDs
-  const { data: myRatings } = await db
+  const { data: myRatings, error: ratingsErr } = await supabase
     .from('ratings')
     .select('id, flavor_id')
     .eq('user_id', userId)
     .limit(200)
+    .returns<RatingIdFlavorId[]>()
 
-  const myRatingIds = ((myRatings ?? []) as any[]).map((r: any) => r.id)
+  if (ratingsErr) { console.error('notifications: ratings query failed', ratingsErr) }
+
+  const myRatingIds = (myRatings ?? []).map((r) => r.id)
   const ratingIdToFlavorId: Record<string, string> = {}
-  for (const r of (myRatings ?? []) as any[]) ratingIdToFlavorId[r.id] = r.flavor_id
+  for (const r of myRatings ?? []) ratingIdToFlavorId[r.id] = r.flavor_id
 
   // Step 2: fetch likes, comments, follows in parallel
   const [likesResult, commentsResult, followsResult] = await Promise.all([
     myRatingIds.length > 0
-      ? db
+      ? supabase
           .from('review_likes')
-          .select('id, created_at, user_id, rating_id')
+          .select('user_id, created_at, rating_id')
           .in('rating_id', myRatingIds)
           .neq('user_id', userId)
           .order('created_at', { ascending: false })
           .limit(30)
-      : Promise.resolve({ data: [] }),
+          .returns<LikeRow[]>()
+      : Promise.resolve({ data: [] as LikeRow[], error: null }),
 
     myRatingIds.length > 0
-      ? db
+      ? supabase
           .from('review_comments')
           .select('id, created_at, text, user_id, rating_id')
           .in('rating_id', myRatingIds)
           .neq('user_id', userId)
           .order('created_at', { ascending: false })
           .limit(30)
-      : Promise.resolve({ data: [] }),
+          .returns<CommentRow[]>()
+      : Promise.resolve({ data: [] as CommentRow[], error: null }),
 
-    db
+    supabase
       .from('follows')
-      .select('id, created_at, follower_id')
+      .select('follower_id, created_at')
       .eq('following_id', userId)
       .order('created_at', { ascending: false })
-      .limit(30),
+      .limit(30)
+      .returns<FollowRow[]>(),
   ])
 
   // Step 3: collect actor IDs and flavor IDs
   const actorIds = new Set<string>()
-  for (const l of (likesResult.data ?? []) as any[]) actorIds.add(l.user_id)
-  for (const c of (commentsResult.data ?? []) as any[]) actorIds.add(c.user_id)
-  for (const f of (followsResult.data ?? []) as any[]) actorIds.add(f.follower_id)
+  for (const l of likesResult.data ?? []) actorIds.add(l.user_id)
+  for (const c of commentsResult.data ?? []) actorIds.add(c.user_id)
+  for (const f of followsResult.data ?? []) actorIds.add(f.follower_id)
 
   const flavorIds = [...new Set(Object.values(ratingIdToFlavorId))]
 
   const [usersResult, flavorsResult] = await Promise.all([
     actorIds.size > 0
-      ? db.from('users').select('id, username, avatar_url').in('id', [...actorIds])
-      : Promise.resolve({ data: [] }),
+      ? supabase.from('users').select('id, username, avatar_url').in('id', [...actorIds]).returns<UserBasicRow[]>()
+      : Promise.resolve({ data: [] as UserBasicRow[], error: null }),
     flavorIds.length > 0
-      ? db.from('flavors').select('id, name, slug').in('id', flavorIds)
-      : Promise.resolve({ data: [] }),
+      ? supabase.from('flavors').select('id, name, slug').in('id', flavorIds).returns<FlavorBasicRow[]>()
+      : Promise.resolve({ data: [] as FlavorBasicRow[], error: null }),
   ])
 
-  const userMap: Record<string, any> = {}
-  for (const u of (usersResult.data ?? []) as any[]) userMap[u.id] = u
+  const userMap: Record<string, UserBasicRow> = {}
+  for (const u of usersResult.data ?? []) userMap[u.id] = u
 
-  const flavorMap: Record<string, any> = {}
-  for (const f of (flavorsResult.data ?? []) as any[]) flavorMap[f.id] = f
+  const flavorMap: Record<string, FlavorBasicRow> = {}
+  for (const f of flavorsResult.data ?? []) flavorMap[f.id] = f
 
   const items: NotificationItem[] = []
 
-  for (const l of (likesResult.data ?? []) as any[]) {
+  for (const l of likesResult.data ?? []) {
     const actor = userMap[l.user_id]
     if (!actor) continue
     const flavor = flavorMap[ratingIdToFlavorId[l.rating_id]]
     items.push({
-      id: `like-${l.id}`,
+      id: `like-${l.rating_id}-${l.user_id}`,
       type: 'like',
       created_at: l.created_at,
       actor_username: actor.username,
@@ -102,7 +111,7 @@ async function getNotifications(userId: string): Promise<NotificationItem[]> {
     })
   }
 
-  for (const c of (commentsResult.data ?? []) as any[]) {
+  for (const c of commentsResult.data ?? []) {
     const actor = userMap[c.user_id]
     if (!actor) continue
     const flavor = flavorMap[ratingIdToFlavorId[c.rating_id]]
@@ -114,15 +123,15 @@ async function getNotifications(userId: string): Promise<NotificationItem[]> {
       actor_avatar: actor.avatar_url ?? null,
       flavor_name: flavor?.name ?? 'a flavor',
       flavor_slug: flavor?.slug ?? '',
-      comment_preview: (c.text as string)?.slice(0, 60) ?? '',
+      comment_preview: c.text?.slice(0, 60) ?? '',
     })
   }
 
-  for (const f of (followsResult.data ?? []) as any[]) {
+  for (const f of followsResult.data ?? []) {
     const actor = userMap[f.follower_id]
     if (!actor) continue
     items.push({
-      id: `follow-${f.id}`,
+      id: `follow-${f.follower_id}`,
       type: 'follow',
       created_at: f.created_at,
       actor_username: actor.username,

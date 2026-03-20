@@ -102,13 +102,11 @@ export default function RepPage() {
     setUploadingPhoto(true)
     const compressed = await compressImage(file)
     const supabase = createClient()
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const db = supabase as any
     const filename = `${user!.id}/${Date.now()}.jpg`
-    const { error: uploadError } = await db.storage.from('rep-photo').upload(filename, compressed, { contentType: 'image/jpeg' })
+    const { error: uploadError } = await supabase.storage.from('rep-photo').upload(filename, compressed, { contentType: 'image/jpeg' })
     setUploadingPhoto(false)
     if (uploadError) { setError('Photo upload failed: ' + uploadError.message); return null }
-    const { data } = db.storage.from('rep-photo').getPublicUrl(filename)
+    const { data } = supabase.storage.from('rep-photo').getPublicUrl(filename)
     return data?.publicUrl ?? null
   }
 
@@ -118,11 +116,16 @@ export default function RepPage() {
     setError(null)
 
     const supabase = createClient()
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const db = supabase as any
 
-    const { error: insertError } = await db.from('reps').insert({
-      type, user_id: user.id, xp_earned: xp, ...payload,
+    const { error: insertError } = await supabase.from('reps').insert({
+      type, user_id: user.id, xp_earned: xp,
+      photo_url: (payload.photo_url as string) ?? null,
+      content: (payload.content as string) ?? null,
+      pr_exercise: (payload.pr_exercise as string) ?? null,
+      pr_value: (payload.pr_value as number) ?? null,
+      pr_unit: (payload.pr_unit as string) ?? null,
+      gym_name: (payload.gym_name as string) ?? null,
+      visibility: (payload.visibility as string) ?? 'public',
     })
 
     if (insertError) {
@@ -132,8 +135,8 @@ export default function RepPage() {
     }
 
     // Award XP — direct update
-    const { data: userData } = await db.from('users').select('xp').eq('id', user.id).single()
-    await db.from('users').update({ xp: (userData?.xp ?? 0) + xp }).eq('id', user.id)
+    const { data: userData } = await supabase.from('users').select('xp').eq('id', user.id).single()
+    await supabase.from('users').update({ xp: (userData?.xp ?? 0) + xp }).eq('id', user.id)
 
     setSubmitting(false)
     setPosted(true)

@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!data) return {}
   const { flavor } = data
   const product = flavor.product
-  const brand = (product as any).brands
+  const brand = (product as unknown as { brands?: { name: string } }).brands
   const score = flavor.avg_overall_score !== null ? ` · ${flavor.avg_overall_score.toFixed(1)}/10` : ''
   return {
     title: `${flavor.name} — ${product.name} | GymTaste`,
@@ -34,12 +34,12 @@ export default async function FlavorPage({ params }: Props) {
 
   const { flavor, ratings, siblingFlavors } = data
   const product = flavor.product
-  const brand = (product as any).brands
+  const brand = (product as unknown as { brands?: { name: string } }).brands
 
   // Get ratings count from last 7 days
   const supabase = await (await import('@/lib/supabase-server')).createServerSupabaseClient()
   const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
-  const { count: weeklyCount } = await (supabase as any)
+  const { count: weeklyCount } = await supabase
     .from('ratings')
     .select('id', { count: 'exact', head: true })
     .eq('flavor_id', flavor.id)
@@ -181,7 +181,7 @@ export default async function FlavorPage({ params }: Props) {
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
             {ratings.map((rating) => (
-              <ReviewCard key={rating.id} rating={rating as any} />
+              <ReviewCard key={rating.id} rating={rating} />
             ))}
           </div>
         )}

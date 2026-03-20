@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/Badge'
 import { FollowButton } from '@/components/user/FollowButton'
 import { AvatarUpload } from '@/components/user/AvatarUpload'
 import { BADGE_TIERS, getScoreColor } from '@/lib/constants'
+import type { User, RatingWithFlavorJoin } from '@/lib/types'
 
 interface Props {
   params: Promise<{ username: string }>
@@ -16,46 +17,48 @@ interface Props {
 export default async function UserProfilePage({ params }: Props) {
   const { username } = await params
   const supabase = await createServerSupabaseClient()
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const db = supabase as any
 
-  const { data: profile } = await db
+  const { data: profile, error: profileError } = await supabase
     .from('users')
     .select('*')
     .eq('username', username)
     .single()
+    .returns<User>()
 
-  if (!profile) notFound()
+  if (profileError || !profile) notFound()
 
   // Follow stats + current user following status
   const { data: { user: currentUser } } = await supabase.auth.getUser()
 
   const [{ count: followerCount }, { count: followingCount }, { data: followCheck }] = await Promise.all([
-    db.from('follows').select('*', { count: 'exact', head: true }).eq('following_id', profile.id),
-    db.from('follows').select('*', { count: 'exact', head: true }).eq('follower_id', profile.id),
+    supabase.from('follows').select('*', { count: 'exact', head: true }).eq('following_id', profile.id),
+    supabase.from('follows').select('*', { count: 'exact', head: true }).eq('follower_id', profile.id),
     currentUser
-      ? db.from('follows').select('follower_id').eq('follower_id', currentUser.id).eq('following_id', profile.id).maybeSingle()
-      : Promise.resolve({ data: null }),
+      ? supabase.from('follows').select('follower_id').eq('follower_id', currentUser.id).eq('following_id', profile.id).maybeSingle()
+      : Promise.resolve({ data: null, error: null }),
   ])
 
   const isFollowing = !!followCheck
 
   // Get ratings with flavor + product + brand info
-  const { data: ratingsRaw } = await db
+  const { data: ratingsRaw, error: ratingsError } = await supabase
     .from('ratings')
     .select('*, flavors(id, name, slug, products(name, slug, brands(name)))')
     .eq('user_id', profile.id)
     .order('created_at', { ascending: false })
+    .returns<RatingWithFlavorJoin[]>()
 
-  const ratings = (ratingsRaw ?? []) as any[]
+  if (ratingsError) console.error('user profile: ratings query failed', ratingsError)
+
+  const ratings = ratingsRaw ?? []
 
   // Stats
   const totalRatings = ratings.length
   const avgScore = totalRatings > 0
-    ? ratings.reduce((sum: number, r: any) => sum + r.overall_score, 0) / totalRatings
+    ? ratings.reduce((sum: number, r) => sum + r.overall_score, 0) / totalRatings
     : null
   const wouldBuyPct = totalRatings > 0
-    ? (ratings.filter((r: any) => r.would_buy_again).length / totalRatings) * 100
+    ? (ratings.filter((r) => r.would_buy_again).length / totalRatings) * 100
     : null
 
   const tierData = BADGE_TIERS[(profile.badge_tier as keyof typeof BADGE_TIERS)] ?? BADGE_TIERS.fresh_meat
@@ -257,7 +260,7 @@ export default async function UserProfilePage({ params }: Props) {
             borderRadius: 'var(--radius-lg)',
             overflow: 'hidden',
           }}>
-            {ratings.map((rating: any, idx: number) => {
+            {ratings.map((rating, idx: number) => {
               const flavor = rating.flavors
               const product = flavor?.products
               const brand = product?.brands
@@ -578,7 +581,7 @@ export default async function UserProfilePage({ params }: Props) {
             </div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              {ratings.map((rating: any) => {
+              {ratings.map((rating) => {
                 const flavor = rating.flavors
                 const product = flavor?.products
                 const brand = product?.brands

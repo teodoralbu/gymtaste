@@ -32,6 +32,7 @@ export interface User {
   avatar_url: string | null
   bio: string | null
   badge_tier: BadgeTier
+  xp: number
   created_at: string
 }
 
@@ -180,7 +181,76 @@ export interface LeaderboardEntry {
   rank: number
 }
 
+// ─── Lightweight row-pick helpers for .returns<T>() ─────────────────────────
+
+export interface ProductBrowseRow {
+  id: string
+  name: string
+  slug: string
+  image_url: string | null
+  caffeine_mg: number | null
+  is_approved: boolean
+  brands: { name: string; slug: string }
+  categories: { name: string; slug: string } | null
+}
+
+export interface FlavorIdRow { id: string; product_id: string }
+export interface RatingScoreRow { flavor_id: string; overall_score: number }
+export interface BrandRow { id: string; name: string; slug: string }
+
+export interface FlavorSearchRow {
+  id: string
+  name: string
+  slug: string
+  products: { name: string; slug: string; brands: { name: string } }
+}
+
+export interface ProductSearchRow {
+  id: string
+  name: string
+  slug: string
+  brands: { name: string }
+}
+
+export interface RatingWithFlavorJoin {
+  id: string
+  user_id: string
+  flavor_id: string
+  overall_score: number
+  would_buy_again: boolean
+  review_text: string | null
+  photo_url: string | null
+  scores: Record<string, number>
+  context_tags: string[]
+  created_at: string
+  flavors: {
+    id: string
+    name: string
+    slug: string
+    products: { name: string; slug: string; brands: { name: string } }
+  }
+}
+
+export interface RatingIdFlavorId { id: string; flavor_id: string }
+export interface UserBasicRow { id: string; username: string; avatar_url: string | null }
+export interface FlavorBasicRow { id: string; name: string; slug: string }
+
 // ─── Supabase Database type (for createClient generic) ───────────────────────
+
+export interface Rep {
+  id: string
+  type: 'progress' | 'pr' | 'checkin'
+  user_id: string
+  xp_earned: number
+  photo_url: string | null
+  content: string | null
+  pr_exercise: string | null
+  pr_value: number | null
+  pr_unit: string | null
+  gym_name: string | null
+  visibility: string
+  created_at: string
+}
 
 export interface RepLike {
   rep_id: string
@@ -209,6 +279,7 @@ export type Database = {
       follows: { Row: R<Follow>; Insert: R<Omit<Follow, 'created_at'>>; Update: R<Partial<Follow>>; Relationships: never[] }
       reports: { Row: R<Report>; Insert: R<Omit<Report, 'id' | 'created_at'>>; Update: R<Partial<Report>>; Relationships: never[] }
       product_submissions: { Row: R<ProductSubmission>; Insert: R<Omit<ProductSubmission, 'id' | 'created_at'>>; Update: R<Partial<ProductSubmission>>; Relationships: never[] }
+      reps: { Row: R<Rep>; Insert: R<Omit<Rep, 'id' | 'created_at'>>; Update: R<Partial<Rep>>; Relationships: never[] }
       rep_likes: { Row: R<RepLike>; Insert: R<Omit<RepLike, 'created_at'>>; Update: R<Partial<RepLike>>; Relationships: never[] }
     }
     Views: Record<string, never>

@@ -9,14 +9,12 @@ import { getScoreColor, BADGE_TIERS } from '@/lib/constants'
 
 async function getStats() {
   const supabase = await createServerSupabaseClient()
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const db = supabase as any
 
   const [{ count: flavorCount }, { count: ratingCount }, { count: productCount }, { count: brandCount }] = await Promise.all([
-    db.from('flavors').select('*', { count: 'exact', head: true }),
-    db.from('ratings').select('*', { count: 'exact', head: true }),
-    db.from('products').select('*', { count: 'exact', head: true }).eq('is_approved', true),
-    db.from('brands').select('*', { count: 'exact', head: true }),
+    supabase.from('flavors').select('*', { count: 'exact', head: true }),
+    supabase.from('ratings').select('*', { count: 'exact', head: true }),
+    supabase.from('products').select('*', { count: 'exact', head: true }).eq('is_approved', true),
+    supabase.from('brands').select('*', { count: 'exact', head: true }),
   ])
 
   return {
@@ -182,8 +180,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ f
               paddingRight: '16px',
               paddingBottom: '4px',
               scrollbarWidth: 'none',
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              WebkitOverflowScrolling: 'touch' as any,
+              WebkitOverflowScrolling: 'touch',
             }}>
               {leaderboard.slice(0, 3).map((item) => (
                 <Link
@@ -235,7 +232,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ f
                       textOverflow: 'ellipsis',
                       whiteSpace: 'nowrap',
                     }}>
-                      {(item.product as any).brands?.name}
+                      {item.product.brands?.name}
                     </div>
                   </div>
                 </Link>
@@ -311,7 +308,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ f
             </div>
           ) : isFollowingTab ? (
             <div style={{ display: 'flex', flexDirection: 'column' }}>
-              {feedItems.map((feedItem: any, idx: number) => (
+              {feedItems.map((feedItem, idx: number) => (
                 <FeedCard key={feedItem.id} item={feedItem} initialLikeCount={0} initialLiked={false} index={idx} />
               ))}
             </div>
@@ -557,7 +554,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ f
                         textOverflow: 'ellipsis',
                         whiteSpace: 'nowrap',
                       }}>
-                        {(item.product as any).brands?.name} &middot; {item.product.name}
+                        {item.product.brands?.name} &middot; {item.product.name}
                       </div>
                       <div style={{
                         fontSize: '15px',

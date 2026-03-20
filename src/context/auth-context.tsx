@@ -90,6 +90,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         badge_tier: 'fresh_meat' as const,
         avatar_url: null,
         bio: null,
+        xp: 0,
       })
       if (profileError) return { error: profileError.message }
     }

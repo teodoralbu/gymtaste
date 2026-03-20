@@ -3,6 +3,7 @@ export const dynamic = 'force-dynamic'
 import Link from 'next/link'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
 import { getScoreColor } from '@/lib/constants'
+import type { FlavorSearchRow, ProductSearchRow, BrandRow, RatingScoreRow } from '@/lib/types'
 
 interface Props {
   searchParams: Promise<{ q?: string }>
@@ -10,42 +11,50 @@ interface Props {
 
 async function search(query: string) {
   const supabase = await createServerSupabaseClient()
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const db = supabase as any
 
   const q = `%${query}%`
 
-  const [{ data: flavors }, { data: products }, { data: brands }] = await Promise.all([
-    db
+  const [{ data: flavors, error: fErr }, { data: products, error: pErr }, { data: brands, error: bErr }] = await Promise.all([
+    supabase
       .from('flavors')
       .select('id, name, slug, products(id, name, slug, brands(name))')
       .ilike('name', q)
-      .limit(10),
-    db
+      .limit(10)
+      .returns<FlavorSearchRow[]>(),
+    supabase
       .from('products')
       .select('id, name, slug, brands(name)')
       .ilike('name', q)
       .eq('is_approved', true)
-      .limit(8),
-    db
+      .limit(8)
+      .returns<ProductSearchRow[]>(),
+    supabase
       .from('brands')
       .select('id, name, slug')
       .ilike('name', q)
-      .limit(5),
+      .limit(5)
+      .returns<BrandRow[]>(),
   ])
 
+  if (fErr) console.error('search: flavors query failed', fErr)
+  if (pErr) console.error('search: products query failed', pErr)
+  if (bErr) console.error('search: brands query failed', bErr)
+
   // Get avg scores for matched flavors
-  const flavorIds = ((flavors ?? []) as any[]).map((f) => f.id)
+  const flavorIds = (flavors ?? []).map((f) => f.id)
   const scoreMap: Record<string, { avg: number; count: number }> = {}
 
   if (flavorIds.length > 0) {
-    const { data: ratings } = await db
+    const { data: ratings, error: rErr } = await supabase
       .from('ratings')
       .select('flavor_id, overall_score')
       .in('flavor_id', flavorIds)
+      .returns<RatingScoreRow[]>()
+
+    if (rErr) console.error('search: ratings query failed', rErr)
 
     const grouped: Record<string, number[]> = {}
-    for (const r of (ratings ?? []) as any[]) {
+    for (const r of ratings ?? []) {
       if (!grouped[r.flavor_id]) grouped[r.flavor_id] = []
       grouped[r.flavor_id].push(r.overall_score)
     }
@@ -58,24 +67,24 @@ async function search(query: string) {
   }
 
   return {
-    flavors: ((flavors ?? []) as any[]).map((f) => ({
-      id: f.id as string,
-      name: f.name as string,
-      slug: f.slug as string,
+    flavors: (flavors ?? []).map((f) => ({
+      id: f.id,
+      name: f.name,
+      slug: f.slug,
       product: f.products as { name: string; slug: string; brands: { name: string } },
       avg_score: scoreMap[f.id]?.avg ?? null,
       rating_count: scoreMap[f.id]?.count ?? 0,
     })),
-    products: ((products ?? []) as any[]).map((p) => ({
-      id: p.id as string,
-      name: p.name as string,
-      slug: p.slug as string,
+    products: (products ?? []).map((p) => ({
+      id: p.id,
+      name: p.name,
+      slug: p.slug,
       brand: p.brands as { name: string },
     })),
-    brands: ((brands ?? []) as any[]).map((b) => ({
-      id: b.id as string,
-      name: b.name as string,
-      slug: b.slug as string,
+    brands: (brands ?? []).map((b) => ({
+      id: b.id,
+      name: b.name,
+      slug: b.slug,
     })),
   }
 }

@@ -5,6 +5,7 @@ import Image from 'next/image'
 import type { Metadata } from 'next'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
 import { getScoreColor } from '@/lib/constants'
+import type { ProductBrowseRow, FlavorIdRow, RatingScoreRow } from '@/lib/types'
 
 export const metadata: Metadata = {
   title: 'Browse Pre-Workout Supplements — GymTaste',
@@ -13,36 +14,39 @@ export const metadata: Metadata = {
 
 async function getProductsWithStats() {
   const supabase = await createServerSupabaseClient()
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const db = supabase as any
 
-  const { data: products } = await db
+  const { data: products, error: productsError } = await supabase
     .from('products')
     .select('*, brands(*), categories(*), image_url')
     .eq('is_approved', true)
     .order('name')
+    .returns<ProductBrowseRow[]>()
 
+  if (productsError) { console.error('browse: products query failed', productsError); return [] }
   if (!products || products.length === 0) return []
 
-  const productIds = (products as any[]).map((p) => p.id)
+  const productIds = products.map((p) => p.id)
   const flavorCountMap: Record<string, number> = {}
   const flavorToProduct: Record<string, string> = {}
 
-  const { data: flavors } = await db
-    .from('flavors').select('id, product_id').in('product_id', productIds)
+  const { data: flavors, error: flavorsError } = await supabase
+    .from('flavors').select('id, product_id').in('product_id', productIds).returns<FlavorIdRow[]>()
 
-  for (const f of (flavors ?? []) as any[]) {
+  if (flavorsError) { console.error('browse: flavors query failed', flavorsError) }
+
+  for (const f of flavors ?? []) {
     flavorCountMap[f.product_id] = (flavorCountMap[f.product_id] ?? 0) + 1
     flavorToProduct[f.id] = f.product_id
   }
 
-  const flavorIds = ((flavors ?? []) as any[]).map((f) => f.id)
-  let ratingsByProduct: Record<string, number[]> = {}
+  const flavorIds = (flavors ?? []).map((f) => f.id)
+  const ratingsByProduct: Record<string, number[]> = {}
 
   if (flavorIds.length > 0) {
-    const { data: ratings } = await db
-      .from('ratings').select('flavor_id, overall_score').in('flavor_id', flavorIds)
-    for (const r of (ratings ?? []) as any[]) {
+    const { data: ratings, error: ratingsError } = await supabase
+      .from('ratings').select('flavor_id, overall_score').in('flavor_id', flavorIds).returns<RatingScoreRow[]>()
+    if (ratingsError) { console.error('browse: ratings query failed', ratingsError) }
+    for (const r of ratings ?? []) {
       const pid = flavorToProduct[r.flavor_id]
       if (!pid) continue
       if (!ratingsByProduct[pid]) ratingsByProduct[pid] = []
@@ -50,16 +54,16 @@ async function getProductsWithStats() {
     }
   }
 
-  return (products as any[]).map((p) => {
+  return products.map((p) => {
     const scores = ratingsByProduct[p.id] ?? []
     const avg = scores.length > 0 ? scores.reduce((a: number, b: number) => a + b, 0) / scores.length : null
     return {
-      id: p.id as string,
-      name: p.name as string,
-      slug: p.slug as string,
-      image_url: p.image_url as string | null,
+      id: p.id,
+      name: p.name,
+      slug: p.slug,
+      image_url: p.image_url,
       brand: p.brands as { name: string; slug: string },
-      caffeine_mg: p.caffeine_mg as number | null,
+      caffeine_mg: p.caffeine_mg,
       flavor_count: flavorCountMap[p.id] ?? 0,
       avg_score: avg,
       rating_count: scores.length,
@@ -81,12 +85,12 @@ export default async function BrowsePage({ searchParams }: BrowseProps) {
     const matchesQuery = !query ||
       p.name.toLowerCase().includes(query) ||
       (p.brand?.name ?? '').toLowerCase().includes(query)
-    const matchesBrand = !brand || (p.brand as any)?.slug === brand
+    const matchesBrand = !brand || p.brand?.slug === brand
     return matchesQuery && matchesBrand
   })
 
   const activeBrandName = brand
-    ? allProducts.find((p) => (p.brand as any)?.slug === brand)?.brand?.name
+    ? allProducts.find((p) => p.brand?.slug === brand)?.brand?.name
     : null
 
   const byBrand: Record<string, typeof products> = {}
@@ -193,7 +197,7 @@ export default async function BrowsePage({ searchParams }: BrowseProps) {
               All
             </a>
             {allBrandsSorted.map((brandName) => {
-              const brandSlug = (byBrand[brandName][0]?.brand as any)?.slug ?? ''
+              const brandSlug = byBrand[brandName][0]?.brand?.slug ?? ''
               const isActive = brand === brandSlug
               return (
                 <a
