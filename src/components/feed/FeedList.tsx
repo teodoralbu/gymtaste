@@ -54,9 +54,23 @@ export function FeedList({ initialItems, initialCursor, userId }: FeedListProps)
         ))}
       </div>
       {cursor && (
-        <div ref={sentinelRef} style={{ padding: '20px', textAlign: 'center' }}>
+        <div ref={sentinelRef} style={{ padding: '0 0 20px' }}>
           {loading && (
-            <span style={{ fontSize: '13px', color: 'var(--text-dim)' }}>Loading more...</span>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
+              {[1, 2].map(i => (
+                <div key={i} style={{ padding: '16px', borderBottom: '1px solid var(--border)' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
+                    <div className="skeleton" style={{ width: 36, height: 36, borderRadius: '50%', flexShrink: 0 }} />
+                    <div style={{ flex: 1 }}>
+                      <div className="skeleton" style={{ height: 14, width: '40%', borderRadius: 'var(--radius-sm)', marginBottom: 6 }} />
+                      <div className="skeleton" style={{ height: 10, width: '25%', borderRadius: 'var(--radius-sm)' }} />
+                    </div>
+                  </div>
+                  <div className="skeleton" style={{ height: 12, width: '90%', borderRadius: 'var(--radius-sm)', marginBottom: 8 }} />
+                  <div className="skeleton" style={{ height: 12, width: '70%', borderRadius: 'var(--radius-sm)' }} />
+                </div>
+              ))}
+            </div>
           )}
         </div>
       )}
