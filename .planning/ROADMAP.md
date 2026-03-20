@@ -80,12 +80,13 @@ Plans:
   3. Color contrast meets WCAG AA in both light and dark themes
   4. Avatar upload validates file type and size before sending — invalid files are rejected with a clear message
   5. Critical data-fetching code (queries.ts, auth context, rating form) uses proper TypeScript types instead of `as any`
-**Plans**: 3 plans
+**Plans**: 4 plans
 
 Plans:
 - [ ] 04-01-PLAN.md — Remove as-any casts from critical paths and add error handling to queries (QUAL-01, QUAL-02, QUAL-03)
 - [ ] 04-02-PLAN.md — Add loading skeletons and empty states to all data-fetching routes (UX-04, UX-05)
-- [ ] 04-03-PLAN.md — Keyboard focus, image alt text, and WCAG AA contrast audit (UX-01, UX-02, UX-03)
+- [ ] 04-03-PLAN.md — Keyboard focus, WCAG AA contrast audit, and text-faint cleanup (UX-01, UX-03)
+- [ ] 04-04-PLAN.md — Image alt text and aria-hidden audit across all components (UX-02)
 
 ## Progress
 
@@ -97,4 +98,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 | 1. Mobile UX | 2/3 | In Progress |  |
 | 2. Bug Hunt & Fixes | 4/4 | Complete | 2026-03-19 |
 | 3. Performance | 0/3 | Not started | - |
-| 4. Quality & Accessibility | 0/3 | Not started | - |
+| 4. Quality & Accessibility | 0/4 | Not started | - |
