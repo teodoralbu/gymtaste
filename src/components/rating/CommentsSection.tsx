@@ -39,8 +39,7 @@ function CommentBottomSheet({
   const [submitError, setSubmitError] = useState('')
   const [hasLoaded, setHasLoaded] = useState(false)
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const db = useMemo(() => createClient() as any, [])
+  const db = useMemo(() => createClient(), [])
 
   // Body scroll lock
   useEffect(() => {
@@ -66,12 +65,12 @@ function CommentBottomSheet({
       return
     }
 
-    const userIds = [...new Set(data.map((c: any) => c.user_id))]
-    const { data: users } = await db.from('users').select('id, username, avatar_url').in('id', userIds)
-    const userMap: Record<string, any> = {}
-    for (const u of (users ?? []) as any[]) userMap[u.id] = u
+    const userIds = [...new Set(data.map((c: { user_id: string }) => c.user_id))]
+    const { data: users } = await db.from('users').select('id, username, avatar_url').in('id', userIds).returns<{ id: string; username: string; avatar_url: string | null }[]>()
+    const userMap: Record<string, { id: string; username: string; avatar_url: string | null }> = {}
+    for (const u of (users ?? [])) userMap[u.id] = u
 
-    setComments(data.map((c: any) => ({
+    setComments(data.map((c: { id: string; text: string; created_at: string; user_id: string }) => ({
       id: c.id,
       text: c.text,
       created_at: c.created_at,
@@ -84,10 +83,6 @@ function CommentBottomSheet({
     if (open && !hasLoaded) {
       setHasLoaded(true)
       loadComments()
-    }
-    // Reset loaded state when sheet closes so re-open refreshes
-    if (!open) {
-      setHasLoaded(false)
     }
   }, [open, hasLoaded, loadComments])
 
@@ -145,7 +140,7 @@ function CommentBottomSheet({
           flexDirection: 'column',
           transform: open ? 'translateY(0)' : 'translateY(100%)',
           transition: 'transform 0.3s cubic-bezier(0.32, 0.72, 0, 1)',
-          overflowY: 'auto',
+          overflow: 'hidden',
         }}
       >
         {/* Handle bar */}
@@ -210,7 +205,7 @@ function CommentBottomSheet({
             </p>
           )}
 
-          {!loadingComments && comments.map((comment) => (
+          {comments.map((comment) => (
             <div key={comment.id} style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
               <Link href={comment.user?.username ? `/users/${comment.user.username}` : '#'} style={{ textDecoration: 'none', flexShrink: 0 }}>
                 <div style={{

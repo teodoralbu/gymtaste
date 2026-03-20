@@ -182,23 +182,34 @@ export interface LeaderboardEntry {
 
 // ─── Supabase Database type (for createClient generic) ───────────────────────
 
+export interface RepLike {
+  rep_id: string
+  user_id: string
+  created_at: string
+}
+
+// Supabase v2.99+ requires Row/Insert/Update to satisfy Record<string,unknown>.
+// TypeScript interfaces don't have an index signature so we intersect with Record.
+type R<T> = T & Record<string, unknown>
+
 export type Database = {
   public: {
     Tables: {
-      categories: { Row: Category; Insert: Omit<Category, 'id' | 'created_at'>; Update: Partial<Category> }
-      category_rating_dimensions: { Row: CategoryRatingDimension; Insert: Omit<CategoryRatingDimension, 'id' | 'created_at'>; Update: Partial<CategoryRatingDimension> }
-      users: { Row: User; Insert: Omit<User, 'created_at'>; Update: Partial<User> }
-      brands: { Row: Brand; Insert: Omit<Brand, 'id' | 'created_at'>; Update: Partial<Brand> }
-      products: { Row: Product; Insert: Omit<Product, 'id' | 'created_at'>; Update: Partial<Product> }
-      flavors: { Row: Flavor; Insert: Omit<Flavor, 'id' | 'created_at'>; Update: Partial<Flavor> }
-      flavor_tags: { Row: FlavorTag; Insert: Omit<FlavorTag, 'id'>; Update: Partial<FlavorTag> }
-      flavor_tag_assignments: { Row: FlavorTagAssignment; Insert: FlavorTagAssignment; Update: Partial<FlavorTagAssignment> }
-      ratings: { Row: Rating; Insert: Omit<Rating, 'id' | 'created_at'>; Update: Partial<Rating> }
-      review_likes: { Row: ReviewLike; Insert: Omit<ReviewLike, 'created_at'>; Update: Partial<ReviewLike> }
-      review_comments: { Row: ReviewComment; Insert: Omit<ReviewComment, 'id' | 'created_at'>; Update: Partial<ReviewComment> }
-      follows: { Row: Follow; Insert: Omit<Follow, 'created_at'>; Update: Partial<Follow> }
-      reports: { Row: Report; Insert: Omit<Report, 'id' | 'created_at'>; Update: Partial<Report> }
-      product_submissions: { Row: ProductSubmission; Insert: Omit<ProductSubmission, 'id' | 'created_at'>; Update: Partial<ProductSubmission> }
+      categories: { Row: R<Category>; Insert: R<Omit<Category, 'id' | 'created_at'>>; Update: R<Partial<Category>>; Relationships: never[] }
+      category_rating_dimensions: { Row: R<CategoryRatingDimension>; Insert: R<Omit<CategoryRatingDimension, 'id' | 'created_at'>>; Update: R<Partial<CategoryRatingDimension>>; Relationships: never[] }
+      users: { Row: R<User>; Insert: R<Omit<User, 'created_at'>>; Update: R<Partial<User>>; Relationships: never[] }
+      brands: { Row: R<Brand>; Insert: R<Omit<Brand, 'id' | 'created_at'>>; Update: R<Partial<Brand>>; Relationships: never[] }
+      products: { Row: R<Product>; Insert: R<Omit<Product, 'id' | 'created_at'>>; Update: R<Partial<Product>>; Relationships: never[] }
+      flavors: { Row: R<Flavor>; Insert: R<Omit<Flavor, 'id' | 'created_at'>>; Update: R<Partial<Flavor>>; Relationships: never[] }
+      flavor_tags: { Row: R<FlavorTag>; Insert: R<Omit<FlavorTag, 'id'>>; Update: R<Partial<FlavorTag>>; Relationships: never[] }
+      flavor_tag_assignments: { Row: R<FlavorTagAssignment>; Insert: R<FlavorTagAssignment>; Update: R<Partial<FlavorTagAssignment>>; Relationships: never[] }
+      ratings: { Row: R<Rating>; Insert: R<Omit<Rating, 'id' | 'created_at'>>; Update: R<Partial<Rating>>; Relationships: never[] }
+      review_likes: { Row: R<ReviewLike>; Insert: R<Omit<ReviewLike, 'created_at'>>; Update: R<Partial<ReviewLike>>; Relationships: never[] }
+      review_comments: { Row: R<ReviewComment>; Insert: R<Omit<ReviewComment, 'id' | 'created_at'>>; Update: R<Partial<ReviewComment>>; Relationships: never[] }
+      follows: { Row: R<Follow>; Insert: R<Omit<Follow, 'created_at'>>; Update: R<Partial<Follow>>; Relationships: never[] }
+      reports: { Row: R<Report>; Insert: R<Omit<Report, 'id' | 'created_at'>>; Update: R<Partial<Report>>; Relationships: never[] }
+      product_submissions: { Row: R<ProductSubmission>; Insert: R<Omit<ProductSubmission, 'id' | 'created_at'>>; Update: R<Partial<ProductSubmission>>; Relationships: never[] }
+      rep_likes: { Row: R<RepLike>; Insert: R<Omit<RepLike, 'created_at'>>; Update: R<Partial<RepLike>>; Relationships: never[] }
     }
     Views: Record<string, never>
     Functions: Record<string, never>

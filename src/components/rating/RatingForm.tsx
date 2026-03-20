@@ -155,9 +155,6 @@ export function RatingForm({ flavor }: Props) {
     setSubmitting(true)
     setError(null)
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const db = supabase as any
-
     let photoUrl: string | null = null
     if (photoFile && user) {
       const ext = photoFile.name.split('.').pop()
@@ -175,13 +172,13 @@ export function RatingForm({ flavor }: Props) {
     }
 
     // Check isFirst BEFORE insert to avoid read-after-write latency issues
-    const { count: existingCount } = await db
+    const { count: existingCount } = await supabase
       .from('ratings')
       .select('id', { count: 'exact', head: true })
       .eq('user_id', user.id)
     const isFirst = existingCount === 0
 
-    const { error: insertError } = await db.from('ratings').insert({
+    const { error: insertError } = await supabase.from('ratings').insert({
       user_id: user.id,
       flavor_id: flavor.id,
       scores,

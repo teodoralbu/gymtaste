@@ -23,15 +23,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true)
 
   const supabase = useMemo(() => createClient(), [])
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const db = supabase as any
 
   const fetchProfile = useCallback(
     async (userId: string) => {
-      const { data } = await db.from('users').select('*').eq('id', userId).single()
+      const { data, error } = await supabase.from('users').select('*').eq('id', userId).single()
+      if (error) {
+        console.error('[fetchProfile] query failed:', error.message)
+        return
+      }
       if (data) setProfile(data as User)
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [supabase]
   )
 
@@ -71,7 +72,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   const signUp = async (email: string, password: string, username: string) => {
-    const { data: existing } = await db
+    const { data: existing } = await supabase
       .from('users')
       .select('id')
       .eq('username', username)
@@ -82,11 +83,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (error) return { error: error.message }
 
     if (data.user) {
-      const { error: profileError } = await db.from('users').insert({
+      const { error: profileError } = await supabase.from('users').insert({
         id: data.user.id,
         username,
         email,
-        badge_tier: 'fresh_meat',
+        badge_tier: 'fresh_meat' as const,
+        avatar_url: null,
+        bio: null,
       })
       if (profileError) return { error: profileError.message }
     }

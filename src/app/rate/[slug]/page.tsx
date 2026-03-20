@@ -12,29 +12,44 @@ export default async function RatePage({ params }: Props) {
 
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect(`/login?redirect=/rate/${slug}`)
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const db = supabase as any
+  interface RatePageFlavor {
+    id: string
+    name: string
+    slug: string
+    products: {
+      id: string
+      name: string
+      slug: string
+      brands: { name: string } | null
+    }
+    flavor_tag_assignments: { flavor_tags: { id: string; name: string; slug: string } }[]
+  }
 
-  const { data: flavor } = await db
+  const { data: flavor, error: flavorError } = await supabase
     .from('flavors')
     .select('id, name, slug, products(id, name, slug, brands(name)), flavor_tag_assignments(flavor_tags(id, name, slug))')
     .eq('slug', slug)
+    .returns<RatePageFlavor[]>()
     .single()
+
+  if (flavorError) {
+    console.error('[RatePage] flavor query failed:', flavorError.message)
+  }
 
   if (!flavor) notFound()
 
   const flavorData = {
-    id: flavor.id as string,
-    name: flavor.name as string,
-    slug: flavor.slug as string,
+    id: flavor.id,
+    name: flavor.name,
+    slug: flavor.slug,
     product: {
-      id: flavor.products.id as string,
-      name: flavor.products.name as string,
-      slug: flavor.products.slug as string,
-      brand: { name: flavor.products.brands?.name as string },
+      id: flavor.products.id,
+      name: flavor.products.name,
+      slug: flavor.products.slug,
+      brand: { name: flavor.products.brands?.name ?? '' },
     },
-    tags: (flavor.flavor_tag_assignments as any[])
-      ?.map((a: any) => a.flavor_tags)
+    tags: flavor.flavor_tag_assignments
+      ?.map((a) => a.flavor_tags)
       .filter(Boolean) ?? [],
   }
 

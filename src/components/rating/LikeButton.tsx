@@ -23,8 +23,7 @@ export function LikeButton({ targetId, targetTable, targetColumn, initialCount, 
   const [loading, setLoading] = useState(false)
   const [animating, setAnimating] = useState(false)
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const db = useMemo(() => createClient() as any, [])
+  const db = useMemo(() => createClient(), [])
 
   async function toggle() {
     if (!user) {
@@ -62,7 +61,9 @@ export function LikeButton({ targetId, targetTable, targetColumn, initialCount, 
         showToast('Unliked')
       }
     } else {
-      const { error } = await db.from(targetTable).insert({ user_id: user.id, [targetColumn]: targetId })
+      const { error } = await (targetTable === 'review_likes'
+        ? db.from('review_likes').insert({ user_id: user.id, rating_id: targetId })
+        : db.from('rep_likes').insert({ user_id: user.id, rep_id: targetId }))
       if (error) {
         // Revert on failure
         setLiked(wasLiked)
