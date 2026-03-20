@@ -92,7 +92,7 @@ export default async function ProductPage({ params }: Props) {
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={product.image_url}
-              alt={product.name}
+              alt={`${product.name} by ${brand?.name ?? 'Unknown'}`}
               style={{
                 width: '100%',
                 height: '100%',

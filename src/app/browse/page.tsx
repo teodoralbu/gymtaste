@@ -133,6 +133,7 @@ export default async function BrowsePage({ searchParams }: BrowseProps) {
             <svg
               width="18" height="18" viewBox="0 0 24 24" fill="none"
               stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+              aria-hidden="true"
               style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-faint)', pointerEvents: 'none' }}
             >
               <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
@@ -268,7 +269,7 @@ export default async function BrowsePage({ searchParams }: BrowseProps) {
                 display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden',
               }}>
                 {darkHorse.image_url ? (
-                  <Image src={darkHorse.image_url} alt={darkHorse.name} width={52} height={52}
+                  <Image src={darkHorse.image_url} alt={`${darkHorse.name} by ${darkHorse.brand?.name ?? 'Unknown'}`} width={52} height={52}
                     style={{ objectFit: 'contain', padding: '4px' }} />
                 ) : (
                   <span style={{ fontSize: '22px' }}>🐴</span>
@@ -371,7 +372,7 @@ export default async function BrowsePage({ searchParams }: BrowseProps) {
                     }}>
                       {product.image_url ? (
                         <Image
-                          src={product.image_url} alt={product.name}
+                          src={product.image_url} alt={`${product.name} by ${product.brand?.name ?? 'Unknown'}`}
                           width={48} height={48}
                           style={{ objectFit: 'contain', padding: '4px' }}
                         />
@@ -469,6 +470,7 @@ export default async function BrowsePage({ searchParams }: BrowseProps) {
             <svg
               width="16" height="16" viewBox="0 0 24 24" fill="none"
               stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+              aria-hidden="true"
               style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-faint)', pointerEvents: 'none' }}
             >
               <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
@@ -565,7 +567,7 @@ export default async function BrowsePage({ searchParams }: BrowseProps) {
                       }}>
                         {product.image_url ? (
                           <Image
-                            src={product.image_url} alt={product.name}
+                            src={product.image_url} alt={`${product.name} by ${product.brand?.name ?? 'Unknown'}`}
                             width={64} height={64}
                             style={{ objectFit: 'contain', padding: '6px' }}
                           />

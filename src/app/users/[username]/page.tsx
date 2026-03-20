@@ -104,7 +104,7 @@ export default async function UserProfilePage({ params }: Props) {
               marginBottom: '14px',
             }}>
               {profile.avatar_url ? (
-                <Image src={profile.avatar_url} alt={profile.username} width={72} height={72} style={{ objectFit: 'cover' }} />
+                <Image src={profile.avatar_url} alt={`${profile.username}'s avatar`} width={72} height={72} style={{ objectFit: 'cover' }} />
               ) : (
                 profile.username?.[0]?.toUpperCase() ?? '?'
               )}
@@ -389,7 +389,7 @@ export default async function UserProfilePage({ params }: Props) {
                 flexShrink: 0, overflow: 'hidden',
               }}>
                 {profile.avatar_url ? (
-                  <Image src={profile.avatar_url} alt={profile.username} width={76} height={76} style={{ objectFit: 'cover' }} />
+                  <Image src={profile.avatar_url} alt={`${profile.username}'s avatar`} width={76} height={76} style={{ objectFit: 'cover' }} />
                 ) : (
                   profile.username?.[0]?.toUpperCase() ?? '?'
                 )}

@@ -48,6 +48,7 @@ export function RateSearch({ products }: Props) {
           strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
+          aria-hidden="true"
           style={{
             position: 'absolute',
             left: '14px',
@@ -212,7 +213,7 @@ export function RateSearch({ products }: Props) {
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
                       src={product.image_url}
-                      alt={product.name}
+                      alt={`${product.name} by ${product.brand?.name ?? 'Unknown'}`}
                       loading="lazy"
                       decoding="async"
                       style={{
@@ -265,6 +266,7 @@ export function RateSearch({ products }: Props) {
                   strokeWidth="2"
                   strokeLinecap="round"
                   strokeLinejoin="round"
+                  aria-hidden="true"
                   style={{ color: 'var(--text-faint)', flexShrink: 0 }}
                 >
                   <polyline points="9 18 15 12 9 6" />

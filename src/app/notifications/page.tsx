@@ -249,7 +249,7 @@ export default async function NotificationsPage() {
                         marginTop: '1px',
                       }}>
                         {notif.actor_avatar ? (
-                          <Image src={notif.actor_avatar} alt="" width={36} height={36} style={{ objectFit: 'cover' }} />
+                          <Image src={notif.actor_avatar} alt={`${notif.actor_username}'s avatar`} width={36} height={36} style={{ objectFit: 'cover' }} />
                         ) : (
                           notif.actor_username[0]?.toUpperCase() ?? '?'
                         )}

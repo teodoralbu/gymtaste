@@ -59,6 +59,7 @@ export function RateLanding({ products }: Props) {
         <svg
           width="16" height="16" viewBox="0 0 24 24" fill="none"
           stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+          aria-hidden="true"
           style={{
             position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)',
             color: 'var(--text-faint)', pointerEvents: 'none',
@@ -100,7 +101,7 @@ export function RateLanding({ products }: Props) {
               WebkitTapHighlightColor: 'transparent',
             }}
           >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
             </svg>
           </button>
@@ -155,7 +156,7 @@ export function RateLanding({ products }: Props) {
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
                       src={product.image_url}
-                      alt=""
+                      alt={`${product.name} by ${product.brands?.name ?? 'Unknown'}`}
                       loading="lazy"
                       decoding="async"
                       style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '4px' }}

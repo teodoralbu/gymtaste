@@ -125,7 +125,7 @@ export default async function LeaderboardPage() {
                       fontSize: '13px', fontWeight: 800, color: 'var(--accent)', overflow: 'hidden',
                     }}>
                       {member.avatar_url ? (
-                        <Image src={member.avatar_url} alt="" width={36} height={36} style={{ objectFit: 'cover' }} />
+                        <Image src={member.avatar_url} alt={`${member.username}'s avatar`} width={36} height={36} style={{ objectFit: 'cover' }} />
                       ) : (
                         member.username?.[0]?.toUpperCase() ?? '?'
                       )}
