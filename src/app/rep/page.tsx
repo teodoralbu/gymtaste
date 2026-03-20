@@ -252,7 +252,19 @@ export default function RepPage() {
             return item.href ? (
               <Link key={item.title} href={item.href} style={{ textDecoration: 'none', color: 'inherit' }}>{inner}</Link>
             ) : (
-              <div key={item.title} style={{ cursor: 'pointer' }} onClick={() => setActiveForm(item.type)}>{inner}</div>
+              <div
+                key={item.title}
+                role="button"
+                tabIndex={0}
+                style={{ cursor: 'pointer' }}
+                onClick={() => setActiveForm(item.type)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault()
+                    setActiveForm(item.type)
+                  }
+                }}
+              >{inner}</div>
             )
           })}
         </div>

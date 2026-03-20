@@ -112,7 +112,13 @@ function CommentBottomSheet({
     <>
       {/* Full-screen overlay / backdrop */}
       <div
+        role="button"
+        tabIndex={-1}
         onClick={onClose}
+        onKeyDown={(e) => {
+          if (e.key === 'Escape') onClose()
+        }}
+        aria-label="Close comments"
         style={{
           position: 'fixed',
           inset: 0,

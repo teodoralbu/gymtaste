@@ -37,7 +37,17 @@ export function ReviewCard({ rating }: ReviewCardProps) {
     }}>
       {/* Header row — always visible, tap to expand */}
       <div
+        role="button"
+        tabIndex={0}
         onClick={() => setExpanded(!expanded)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            setExpanded(!expanded)
+          }
+        }}
+        aria-expanded={expanded}
+        aria-label={expanded ? "Collapse review" : "Expand review"}
         style={{
           display: 'flex',
           alignItems: 'center',

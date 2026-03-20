@@ -80,8 +80,17 @@ export function AvatarUpload({ currentAvatarUrl, username, tierColor }: Props) {
 
   return (
     <div
+      role="button"
+      tabIndex={0}
       style={{ position: 'relative', width: '76px', height: '76px', flexShrink: 0, cursor: 'pointer' }}
       onClick={() => fileInputRef.current?.click()}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          fileInputRef.current?.click()
+        }
+      }}
+      aria-label="Upload avatar photo"
     >
       {/* Avatar circle */}
       <div style={{
