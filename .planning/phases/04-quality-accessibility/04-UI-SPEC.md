@@ -27,7 +27,9 @@ created: 2026-03-20
 
 ## Spacing Scale
 
-Declared values from existing `globals.css` custom properties (already in project):
+This project uses a **4-point grid** (not the 8-point standard set). All spacing tokens are multiples of 4. The extended set includes 12px and 20px which are established project tokens defined as CSS custom properties in `globals.css`.
+
+Declared values (all multiples of 4):
 
 | Token | Value | Usage |
 |-------|-------|-------|
@@ -38,22 +40,28 @@ Declared values from existing `globals.css` custom properties (already in projec
 | xl | 24px (`--space-xl`) | Section gaps |
 | 2xl | 32px (`--space-2xl`) | Major section breaks |
 
-Exceptions: Skeleton loading blocks use exact pixel heights to match the content they replace (see Loading States section). The 12px and 20px values break strict 8-point grid but are established project tokens -- do not change them.
+Extended set: {4, 8, 12, 16, 20, 24, 32, 48, 64}
+
+Exceptions: Skeleton loading blocks use exact pixel heights to match the content they replace (see Loading States section). The 4px value is available for fine adjustments (e.g., outline-offset) but has no named token.
 
 ---
 
 ## Typography
 
-Existing project type scale (from globals.css and component inspection):
+Existing project type scale (from globals.css and component inspection). Uses exactly 2 weights: 400 (regular) for body text and 700 (bold) for all emphasis roles.
 
 | Role | Size | Weight | Line Height |
 |------|------|--------|-------------|
 | Body | 16px | 400 (regular) | 1.5 |
-| Label / Caption | 13px | 600 (semibold) | 1.4 |
-| Section Title | 17px | 800 (extrabold) | 1.2 |
+| Label / Caption | 13px | 700 (bold) | 1.4 |
+| Section Title | 18px | 700 (bold) | 1.2 |
 | Page Heading | 20px | 700 (bold) | 1.2 |
 
-Source: globals.css `.m-section-title` (17px/800), `.btn` (14px/700), `.m-segment-tab` (13px/600), `.input` (16px), body inherited.
+Source: globals.css `.m-section-title` (updated from 17px/800 to 18px/700), `.btn` (14px/700), `.m-segment-tab` (13px, updated from 600 to 700), `.input` (16px), body inherited.
+
+Font size rationale: The 4 sizes (13, 16, 18, 20) provide clear hierarchical steps. The Section Title was adjusted from 17px to 18px to create a perceptible 2px step from 16px Body rather than an imperceptible 1px difference.
+
+Weight consolidation: Previous spec used 4 weights (400, 600, 700, 800). Collapsed to 2 weights: 400 for body text, 700 for all emphasis (labels, titles, headings). During implementation, update `.m-section-title` from `font-weight: 800` to `font-weight: 700` and `.m-segment-tab` from `font-weight: 600` to `font-weight: 700`.
 
 No new type styles introduced in this phase. Empty state and loading skeleton text must use these existing roles only.
 
