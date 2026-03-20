@@ -368,7 +368,7 @@ export function FeedCard({ rating, item, initialLiked = false, initialLikeCount 
         <div style={{ padding: '0 16px 12px' }}>
           <Image
             src={ratingData.photo_url}
-            alt="Review photo"
+            alt={`${ratingData.flavor?.name ?? 'Product'} review photo`}
             width={400}
             height={220}
             style={{ width: '100%', height: 'auto', maxHeight: '220px', borderRadius: '10px', objectFit: 'cover', display: 'block' }}
