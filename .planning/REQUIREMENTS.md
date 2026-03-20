@@ -39,9 +39,9 @@
 
 ### UX & Accessibility
 
-- [ ] **UX-01**: All interactive elements have visible focus states (keyboard navigation works)
+- [x] **UX-01**: All interactive elements have visible focus states (keyboard navigation works)
 - [ ] **UX-02**: Images have alt text; decorative images are marked appropriately
-- [ ] **UX-03**: Color contrast meets WCAG AA in both light and dark themes
+- [x] **UX-03**: Color contrast meets WCAG AA in both light and dark themes
 - [x] **UX-04**: Empty states are handled gracefully — no blank pages when feed/results are empty
 - [x] **UX-05**: Loading states are shown while data fetches — no content flash or invisible loading
 
@@ -100,9 +100,9 @@
 | QUAL-01 | Phase 4 | Pending |
 | QUAL-02 | Phase 4 | Pending |
 | QUAL-03 | Phase 4 | Pending |
-| UX-01 | Phase 4 | Pending |
+| UX-01 | Phase 4 | Complete |
 | UX-02 | Phase 4 | Pending |
-| UX-03 | Phase 4 | Pending |
+| UX-03 | Phase 4 | Complete |
 | UX-04 | Phase 4 | Complete |
 | UX-05 | Phase 4 | Complete |
 
