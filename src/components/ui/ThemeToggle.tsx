@@ -3,10 +3,10 @@
 import { useState, useRef, useEffect } from 'react'
 import { useTheme, Theme } from '@/context/theme-context'
 
-const THEMES: { key: Theme; label: string; description: string; dot: string }[] = [
-  { key: 'blue',  label: 'Blue',  description: 'Dark navy',    dot: '#3D8EFF' },
-  { key: 'light', label: 'Light', description: 'Clean white',  dot: '#2563EB' },
-  { key: 'black', label: 'Black', description: 'Pure black',   dot: '#FFFFFF' },
+const THEMES: { key: Theme; label: string; description: string; dot: string; dotBorder?: string }[] = [
+  { key: 'blue',  label: 'Blue',  description: 'Dark navy',   dot: '#3D8EFF' },
+  { key: 'light', label: 'Light', description: 'Clean white', dot: '#F8F9FC', dotBorder: '#DDE3EF' },
+  { key: 'black', label: 'Black', description: 'Pure black',  dot: '#111111', dotBorder: '#444444' },
 ]
 
 const ICONS: Record<Theme, React.ReactNode> = {
@@ -95,7 +95,7 @@ export function ThemeToggle() {
           zIndex: 100,
           animation: 'fadeUp 0.15s ease forwards',
         }}>
-          {THEMES.map(({ key, label, description, dot }) => {
+          {THEMES.map(({ key, label, description, dot, dotBorder }) => {
             const active = theme === key
             return (
               <button
@@ -126,7 +126,7 @@ export function ThemeToggle() {
                   height: '10px',
                   borderRadius: '50%',
                   backgroundColor: dot,
-                  border: key === 'light' ? '1px solid var(--border)' : 'none',
+                  border: dotBorder ? `1px solid ${dotBorder}` : 'none',
                   flexShrink: 0,
                 }} />
                 <span style={{ flex: 1 }}>
