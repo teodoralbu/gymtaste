@@ -38,6 +38,12 @@ Declared values (from existing `globals.css` tokens -- no changes for this phase
 | xl | 24px (`--space-xl`) | Section margin-bottom |
 | 2xl | 32px (`--space-2xl`) | Major section breaks |
 
+**Standard-set exemptions:** The following values fall outside the standard spacing set {4, 8, 16, 24, 32, 48, 64} but are pre-existing inherited tokens defined in `globals.css` prior to this phase. This phase does NOT introduce or modify these values; they are documented here for completeness only and are therefore exempt from the standard-set constraint:
+
+- `--space-sm` (12px) -- inherited from `globals.css`, used project-wide for small gaps
+- `--space-lg` (20px) -- inherited from `globals.css`, used project-wide for section internal padding
+- Hero text wrapper padding (28px top/bottom) -- inherited from existing hero card padding pattern in `page.tsx`
+
 Exceptions: Hero image padding is 0px (edge-to-edge within card). Hero text content wrapper uses 28px top/bottom, 20px left/right (matching existing hero card padding pattern).
 
 ---
