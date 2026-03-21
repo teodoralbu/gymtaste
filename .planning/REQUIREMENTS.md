@@ -7,7 +7,7 @@
 
 ### Mobile UX
 
-- [x] **MOB-01**: Bottom navigation is accessible, correctly sized (touch targets ≥44px), and highlights the active route
+- [x] **MOB-01**: Bottom navigation is accessible, correctly sized (touch targets >=44px), and highlights the active route
 - [x] **MOB-02**: Feed cards are readable and tappable on small screens without horizontal overflow or clipping
 - [x] **MOB-03**: Rating form (rate/[slug]) is fully usable on mobile — sliders, inputs, and submit button work without awkward layouts
 - [ ] **MOB-04**: User profile and settings pages are correctly laid out on mobile — no overflow, avatar upload works on mobile
@@ -180,8 +180,8 @@
 **Coverage:**
 - v1.1 requirements: 25 total
 - Mapped to phases: 25
-- Unmapped: 0 ✓
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-18 (v1.0)*
-*Last updated: 2026-03-21 after v1.1 milestone start*
+*Last updated: 2026-03-21 after v1.1 roadmap creation*
