@@ -2,35 +2,50 @@
 
 import { createContext, useContext, useEffect, useState } from 'react'
 
-type Theme = 'dark' | 'light'
+export type Theme = 'blue' | 'light' | 'black'
+
+const CYCLE: Theme[] = ['blue', 'light', 'black']
+const STORAGE_KEY = 'gt-theme'
 
 interface ThemeContextValue {
   theme: Theme
-  toggle: () => void
+  setTheme: (t: Theme) => void
+  cycle: () => void
 }
 
-const ThemeContext = createContext<ThemeContextValue>({ theme: 'dark', toggle: () => {} })
+const ThemeContext = createContext<ThemeContextValue>({
+  theme: 'blue',
+  setTheme: () => {},
+  cycle: () => {},
+})
+
+function applyTheme(theme: Theme) {
+  document.documentElement.setAttribute('data-theme', theme)
+}
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<Theme>('dark')
+  const [theme, setThemeState] = useState<Theme>('blue')
 
   useEffect(() => {
-    const saved = localStorage.getItem('gt-theme') as Theme | null
-    if (saved === 'light' || saved === 'dark') {
-      setTheme(saved)
-      document.documentElement.setAttribute('data-theme', saved)
-    }
+    const saved = localStorage.getItem(STORAGE_KEY) as Theme | null
+    const initial = saved && CYCLE.includes(saved) ? saved : 'blue'
+    setThemeState(initial)
+    applyTheme(initial)
   }, [])
 
-  function toggle() {
-    const next: Theme = theme === 'dark' ? 'light' : 'dark'
-    setTheme(next)
-    localStorage.setItem('gt-theme', next)
-    document.documentElement.setAttribute('data-theme', next)
+  function setTheme(next: Theme) {
+    setThemeState(next)
+    localStorage.setItem(STORAGE_KEY, next)
+    applyTheme(next)
+  }
+
+  function cycle() {
+    const idx = CYCLE.indexOf(theme)
+    setTheme(CYCLE[(idx + 1) % CYCLE.length])
   }
 
   return (
-    <ThemeContext.Provider value={{ theme, toggle }}>
+    <ThemeContext.Provider value={{ theme, setTheme, cycle }}>
       {children}
     </ThemeContext.Provider>
   )

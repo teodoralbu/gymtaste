@@ -6,29 +6,27 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   loading?: boolean
 }
 
+const sizes = {
+  sm: { padding: '6px 14px', fontSize: '12px' },
+  md: { padding: '10px 20px', fontSize: '14px' },
+  lg: { padding: '14px 28px', fontSize: '16px' },
+}
+
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className = '', variant = 'primary', size = 'md', loading, disabled, children, ...props }, ref) => {
-    const base =
-      'inline-flex items-center justify-center font-semibold rounded-lg transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00B4FF] disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]'
-
-    const variants = {
-      primary: 'bg-[#00B4FF] text-[#0A0A0A] hover:bg-[#33C4FF]',
-      secondary: 'bg-[#1E1E1E] text-white border border-[#2A2A2A] hover:bg-[#2A2A2A]',
-      ghost: 'bg-transparent text-white hover:bg-[#1E1E1E]',
-      danger: 'bg-[#FF3D00] text-white hover:bg-[#FF5733]',
-    }
-
-    const sizes = {
-      sm: 'px-3 py-1.5 text-xs',
-      md: 'px-4 py-2 text-sm',
-      lg: 'px-6 py-3 text-base',
-    }
+    const variantClass = {
+      primary: 'btn btn-primary',
+      secondary: 'btn btn-secondary',
+      ghost: 'btn btn-ghost',
+      danger: 'btn btn-danger',
+    }[variant]
 
     return (
       <button
         ref={ref}
         disabled={disabled || loading}
-        className={`${base} ${variants[variant]} ${sizes[size]} ${className}`}
+        style={sizes[size]}
+        className={`${variantClass} focus-visible:outline-none disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98] ${className}`}
         {...props}
       >
         {loading ? (

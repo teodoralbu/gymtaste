@@ -21,7 +21,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   viewportFit: 'cover',
   maximumScale: 1,
-  themeColor: '#0D0F14',
+  themeColor: '#080B12',
 }
 
 export const metadata: Metadata = {
@@ -49,11 +49,11 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={`dark ${inter.variable}`}>
+    <html lang="en" data-theme="blue" className={inter.variable}>
       <head>
         <meta name="mobile-web-app-capable" content="yes" />
         {/* Prevent flash of wrong theme before React hydrates */}
-        <script dangerouslySetInnerHTML={{ __html: `try{var t=localStorage.getItem('theme');if(!t)t=window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';document.documentElement.className=t==='light'?'${inter.variable}':'dark ${inter.variable}'}catch(e){}` }} />
+        <script dangerouslySetInnerHTML={{ __html: `try{var t=localStorage.getItem('gt-theme');var valid=['blue','light','black'];if(!valid.includes(t))t='blue';document.documentElement.setAttribute('data-theme',t)}catch(e){}` }} />
       </head>
       <body className="antialiased flex flex-col min-h-screen">
         <ThemeProvider>
