@@ -36,16 +36,16 @@
 /* ─── Theme: Light ───────────────────────────────────────────────────────────── */
 
 [data-theme="light"] {
-  --bg:          #E8EBF5;
-  --bg-card:     #F2F4FB;
-  --bg-elevated: #DDE2F0;
-  --bg-hover:    #D4DAEA;
-  --border:      #C8D0E8;
-  --border-soft: #D8DFF0;
-  --text:        #0D1021;
-  --text-muted:  #424E6A;
-  --text-dim:    #626E8A;
-  --text-faint:  #A8B2CC;
+  --bg:          #EDEBE6;
+  --bg-card:     #F5F3EF;
+  --bg-elevated: #E5E3DE;
+  --bg-hover:    #DDDBD5;
+  --border:      #CCCAC4;
+  --border-soft: #D8D6D1;
+  --text:        #1C1A17;
+  --text-muted:  #5C5852;
+  --text-dim:    #7A766F;
+  --text-faint:  #BAB8B2;
   --accent:      #2563EB;
   --accent-dim:  #2563EB14;
   --accent-glow: #2563EB28;
@@ -53,9 +53,9 @@
   --red:         #DC2626;
   --yellow:      #D97706;
 
-  --shadow-sm:   0 1px 3px rgba(13,16,33,0.10), 0 1px 2px rgba(13,16,33,0.06);
-  --shadow-md:   0 4px 16px rgba(13,16,33,0.12), 0 2px 6px rgba(13,16,33,0.07);
-  --shadow-lg:   0 8px 40px rgba(13,16,33,0.14), 0 4px 12px rgba(13,16,33,0.08);
+  --shadow-sm:   0 1px 3px rgba(28,26,23,0.10), 0 1px 2px rgba(28,26,23,0.06);
+  --shadow-md:   0 4px 16px rgba(28,26,23,0.12), 0 2px 6px rgba(28,26,23,0.07);
+  --shadow-lg:   0 8px 40px rgba(28,26,23,0.14), 0 4px 12px rgba(28,26,23,0.08);
   --glow-accent: 0 0 20px rgba(37,99,235,0.15);
 
   color-scheme: light;
@@ -64,16 +64,16 @@
 /* ─── Theme: Black ───────────────────────────────────────────────────────────── */
 
 [data-theme="black"] {
-  --bg:          #000000;
-  --bg-card:     #0C0C0C;
-  --bg-elevated: #141414;
-  --bg-hover:    #1C1C1C;
-  --border:      #242424;
-  --border-soft: #181818;
-  --text:        #FFFFFF;
-  --text-muted:  #888888;
-  --text-dim:    #555555;
-  --text-faint:  #2A2A2A;
+  --bg:          #18181B;
+  --bg-card:     #1E1E22;
+  --bg-elevated: #27272B;
+  --bg-hover:    #2E2E33;
+  --border:      #38383E;
+  --border-soft: #2C2C31;
+  --text:        #F4F4F5;
+  --text-muted:  #A1A1AA;
+  --text-dim:    #71717A;
+  --text-faint:  #3F3F46;
   --accent:      #3D8EFF;
   --accent-dim:  #3D8EFF18;
   --accent-glow: #3D8EFF45;

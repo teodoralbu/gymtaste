@@ -78,7 +78,9 @@ export function ThemeToggle() {
           e.currentTarget.style.color = 'var(--text-muted)'
         }}
       >
-        {ICONS[theme]}
+        <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+          <span style={{ fontSize: '14px', lineHeight: 1 }}>🎨</span>
+        </span>
       </button>
 
       {open && (
