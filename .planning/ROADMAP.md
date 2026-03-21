@@ -44,7 +44,11 @@ Full archive: `.planning/milestones/v1.0-ROADMAP.md`
   3. Taste/flavor tags display consistently across all product cards, or are absent consistently when not applicable
   4. Bottom navigation has no browse/search button (clean nav with only valid routes)
   5. Landing page displays a hero image alongside the "rate it before you waste it" tagline
-**Plans**: TBD
+**Plans:** 2 plans
+
+Plans:
+- [ ] 06-01-PLAN.md — Fix username regex, email text color, and tag consistency (FIX-01, FIX-02, FIX-03)
+- [ ] 06-02-PLAN.md — Remove Browse tab from nav and add hero image (FIX-04, FIX-05)
 
 ### Phase 7: Rating System Overhaul
 **Goal**: Users rate pre-workouts on meaningful dimensions and the platform cleanly separates old and new rating data
@@ -119,7 +123,7 @@ Full archive: `.planning/milestones/v1.0-ROADMAP.md`
 | 3. Performance | v1.0 | 3/3 | Complete | 2026-03-19 |
 | 4. Quality & Accessibility | v1.0 | 4/4 | Complete | 2026-03-21 |
 | 5. Security & Accessibility Polish | v1.0 | 1/1 | Complete | 2026-03-20 |
-| 6. Bug Fixes & UX Quick Wins | v1.1 | 0/? | Not started | - |
+| 6. Bug Fixes & UX Quick Wins | v1.1 | 0/2 | Planning complete | - |
 | 7. Rating System Overhaul | v1.1 | 0/? | Not started | - |
 | 8. Comment System Upgrade | v1.1 | 0/? | Not started | - |
 | 9. Notification System | v1.1 | 0/? | Not started | - |
@@ -129,4 +133,4 @@ Full archive: `.planning/milestones/v1.0-ROADMAP.md`
 
 ---
 *Roadmap created: 2026-03-21*
-*Last updated: 2026-03-21*
+*Last updated: 2026-03-22*
