@@ -85,7 +85,7 @@ export function BottomNav() {
       </Link>
 
       {/* Center spacer — pushes Top left and Alerts right, + button floats above */}
-      <div style={{ flex: 1.6 }} aria-hidden="true" />
+      <div style={{ flex: 1 }} aria-hidden="true" />
 
       {/* Notifications */}
       <Link href="/notifications" style={tabStyle(notifActive)}>
