@@ -108,7 +108,10 @@ export interface ReviewComment {
   id: string
   rating_id: string
   user_id: string
-  text: string
+  text: string | null
+  parent_comment_id: string | null
+  is_deleted: boolean
+  edited_at: string | null
   created_at: string
 }
 
@@ -281,7 +284,7 @@ export type Database = {
       flavor_tag_assignments: { Row: R<FlavorTagAssignment>; Insert: R<FlavorTagAssignment>; Update: R<Partial<FlavorTagAssignment>>; Relationships: never[] }
       ratings: { Row: R<Rating>; Insert: R<Omit<Rating, 'id' | 'created_at'>>; Update: R<Partial<Rating>>; Relationships: never[] }
       review_likes: { Row: R<ReviewLike>; Insert: R<Omit<ReviewLike, 'created_at'>>; Update: R<Partial<ReviewLike>>; Relationships: never[] }
-      review_comments: { Row: R<ReviewComment>; Insert: R<Omit<ReviewComment, 'id' | 'created_at'>>; Update: R<Partial<ReviewComment>>; Relationships: never[] }
+      review_comments: { Row: R<ReviewComment>; Insert: R<Omit<ReviewComment, 'id' | 'created_at' | 'parent_comment_id' | 'is_deleted' | 'edited_at'> & { parent_comment_id?: string | null }>; Update: R<Partial<ReviewComment>>; Relationships: never[] }
       follows: { Row: R<Follow>; Insert: R<Omit<Follow, 'created_at'>>; Update: R<Partial<Follow>>; Relationships: never[] }
       reports: { Row: R<Report>; Insert: R<Omit<Report, 'id' | 'created_at'>>; Update: R<Partial<Report>>; Relationships: never[] }
       product_submissions: { Row: R<ProductSubmission>; Insert: R<Omit<ProductSubmission, 'id' | 'created_at'>>; Update: R<Partial<ProductSubmission>>; Relationships: never[] }

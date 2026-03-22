@@ -70,9 +70,9 @@ function CommentBottomSheet({
     const userMap: Record<string, { id: string; username: string; avatar_url: string | null }> = {}
     for (const u of (users ?? [])) userMap[u.id] = u
 
-    setComments(data.map((c: { id: string; text: string; created_at: string; user_id: string }) => ({
+    setComments(data.map((c: { id: string; text: string | null; created_at: string; user_id: string }) => ({
       id: c.id,
-      text: c.text,
+      text: c.text ?? '',
       created_at: c.created_at,
       user: userMap[c.user_id] ?? null,
     })))

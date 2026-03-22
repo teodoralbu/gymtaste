@@ -483,7 +483,7 @@ export async function getUnifiedFeed(limit = 30, userId?: string) {
   const [flavorsResult, ratingUsersResult, commentCountsResult, allLikesResult] = await Promise.all([
     supabase.from('flavors').select('id, name, slug, product_id, products(id, name, slug, image_url, brands(name))').in('id', flavorIds).returns<FlavorWithProductForFeed[]>(),
     supabase.from('users').select('id, username, avatar_url, badge_tier').in('id', userIds).returns<UserBasic[]>(),
-    supabase.from('review_comments').select('rating_id').in('rating_id', ratingIds).returns<CommentCountRow[]>(),
+    supabase.from('review_comments').select('rating_id').in('rating_id', ratingIds).eq('is_deleted', false).returns<CommentCountRow[]>(),
     supabase.from('review_likes').select('rating_id, user_id').in('rating_id', ratingIds).returns<ReviewLikeRow[]>(),
   ])
 
@@ -577,7 +577,7 @@ export async function getFollowingUnifiedFeed(userId: string, limit = 30) {
   const [flavorsResult, ratingUsersResult, commentCountsResult, allLikesResult] = await Promise.all([
     supabase.from('flavors').select('id, name, slug, product_id, products(id, name, slug, image_url, brands(name))').in('id', flavorIds).returns<FlavorWithProductForFeed[]>(),
     supabase.from('users').select('id, username, avatar_url, badge_tier').in('id', userIds).returns<UserBasic[]>(),
-    supabase.from('review_comments').select('rating_id').in('rating_id', ratingIds).returns<CommentCountRow[]>(),
+    supabase.from('review_comments').select('rating_id').in('rating_id', ratingIds).eq('is_deleted', false).returns<CommentCountRow[]>(),
     supabase.from('review_likes').select('rating_id, user_id').in('rating_id', ratingIds).returns<ReviewLikeRow[]>(),
   ])
 
