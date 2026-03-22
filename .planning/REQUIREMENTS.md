@@ -64,9 +64,9 @@
 
 ### Comments
 
-- [ ] **COMM-01**: User can edit their own comment (shows "edited" marker after edit)
-- [ ] **COMM-02**: User can delete their own comment
-- [ ] **COMM-03**: User can reply to a comment (single-level threading, Instagram style)
+- [x] **COMM-01**: User can edit their own comment (shows "edited" marker after edit)
+- [x] **COMM-02**: User can delete their own comment
+- [x] **COMM-03**: User can reply to a comment (single-level threading, Instagram style)
 
 ### Notifications
 
@@ -160,9 +160,9 @@
 | RATE-02 | Phase 7 | Complete |
 | RATE-03 | Phase 7 | Complete |
 | RATE-04 | Phase 7 | Complete |
-| COMM-01 | Phase 8 | Pending |
-| COMM-02 | Phase 8 | Pending |
-| COMM-03 | Phase 8 | Pending |
+| COMM-01 | Phase 8 | Complete |
+| COMM-02 | Phase 8 | Complete |
+| COMM-03 | Phase 8 | Complete |
 | NOTIF-01 | Phase 9 | Pending |
 | NOTIF-02 | Phase 9 | Pending |
 | NOTIF-03 | Phase 9 | Pending |

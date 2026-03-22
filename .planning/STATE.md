@@ -4,12 +4,12 @@ milestone: v1.1
 milestone_name: Feature Expansion
 status: unknown
 stopped_at: Phase 8 context gathered
-last_updated: "2026-03-22T12:14:56.675Z"
+last_updated: "2026-03-22T12:35:22.700Z"
 progress:
   total_phases: 7
   completed_phases: 2
-  total_plans: 5
-  completed_plans: 5
+  total_plans: 7
+  completed_plans: 6
 ---
 
 # Project State
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-21)
 
 **Core value:** Users can confidently discover and rate gym supplement flavors through a fast, polished mobile experience
-**Current focus:** Phase 07 — rating-system-overhaul
+**Current focus:** Phase 08 — comment-system-upgrade
 
 ## Current Position
 
-Phase: 07 (rating-system-overhaul) — EXECUTING
-Plan: 3 of 3
+Phase: 08 (comment-system-upgrade) — EXECUTING
+Plan: 2 of 2
 
 ## Performance Metrics
 
@@ -43,6 +43,7 @@ Plan: 3 of 3
 | 07-01 | Schema & types foundation | 2min | 2 | 4 |
 | 07-02 | Rating form overhaul | 2min | 2 | 2 |
 | Phase 07-03 PDisplay filters and value pill | 2min | 2 tasks | 5 files |
+| 08-01 | Comment schema foundation | 1min | 2 | 4 |
 
 ## Accumulated Context
 
@@ -69,6 +70,9 @@ Carried forward from v1.0:
 - DB already has servings_per_container + price_per_serving — use these for value score
 - [Phase 07-03]: Value pill uses != null to handle both null and undefined
 - [Phase 07-03]: Home page stats and getTopReviewers excluded from schema_version filter (vanity metrics)
+- [Phase 08-01]: text column made nullable for soft-delete text clearing
+- [Phase 08-01]: edited_at uses TIMESTAMPTZ over boolean for richer edit data
+- [Phase 08-01]: Partial index on parent_comment_id WHERE NOT NULL
 
 ### Pending Todos
 
@@ -83,6 +87,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-22T12:14:56.672Z
-Stopped at: Phase 8 context gathered
-Resume file: .planning/phases/08-comment-system-upgrade/08-CONTEXT.md
+Last session: 2026-03-22T12:34:30Z
+Stopped at: Completed 08-01-PLAN.md
+Resume file: .planning/phases/08-comment-system-upgrade/08-01-SUMMARY.md
