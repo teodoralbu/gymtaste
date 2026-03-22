@@ -14,6 +14,7 @@ interface ReviewCardProps {
     review_text: string | null
     context_tags: string[]
     scores: Record<string, number>
+    value_score?: number | null
     like_count: number
     user_has_liked: boolean
     user: {
@@ -143,6 +144,24 @@ export function ReviewCard({ rating }: ReviewCardProps) {
                   </div>
                 )
               })}
+              {rating.value_score != null && (
+                <div key="value" style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                  backgroundColor: 'var(--bg-elevated)',
+                  border: '1px solid var(--border-soft)',
+                  borderRadius: '8px',
+                  padding: '5px 10px',
+                }}>
+                  <span style={{ fontSize: '13px', fontWeight: 800, color: getScoreColor(rating.value_score) }}>
+                    {rating.value_score.toFixed ? rating.value_score.toFixed(1) : rating.value_score}
+                  </span>
+                  <span style={{ fontSize: '10px', color: 'var(--text-dim)', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>
+                    Value
+                  </span>
+                </div>
+              )}
             </div>
           )}
 
