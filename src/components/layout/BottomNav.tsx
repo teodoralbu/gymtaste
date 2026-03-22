@@ -13,6 +13,7 @@ export function BottomNav() {
   const homeActive    = pathname === '/'
   const rateActive    = pathname.startsWith('/rate')
   const topActive     = pathname.startsWith('/leaderboard')
+  const notifActive   = pathname.startsWith('/notifications')
   const profileActive = pathname.startsWith('/users') || pathname.startsWith('/settings') || pathname === '/login' || pathname === '/signup'
 
   const tabStyle = (active: boolean) => ({
@@ -83,8 +84,15 @@ export function BottomNav() {
         {topActive && <span style={{ position: 'absolute', top: '6px', left: '50%', transform: 'translateX(-50%)', width: '16px', height: '2px', borderRadius: '999px', backgroundColor: 'var(--accent)' }} />}
       </Link>
 
-      {/* Ghost slot — keeps Profile on the right while + floats at true center */}
-      <div style={{ flex: 1 }} aria-hidden="true" />
+      {/* Notifications */}
+      <Link href="/notifications" style={tabStyle(notifActive)}>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={notifActive ? 2.5 : 2} strokeLinecap="round" strokeLinejoin="round">
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+          <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+        </svg>
+        <span style={labelStyle(notifActive)}>Alerts</span>
+        {notifActive && <span style={{ position: 'absolute', top: '6px', left: '50%', transform: 'translateX(-50%)', width: '16px', height: '2px', borderRadius: '999px', backgroundColor: 'var(--accent)' }} />}
+      </Link>
 
       {/* Profile */}
       <Link href={profileHref} style={tabStyle(profileActive)}>
