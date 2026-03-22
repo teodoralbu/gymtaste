@@ -89,6 +89,7 @@ interface FeedRatingRow {
   user_id: string
   scores: Record<string, number> | null
   context_tags: string[] | null
+  value_score: number | null
 }
 
 interface ProductWithBrandAndCategory extends ProductWithBrandRow {
@@ -139,6 +140,7 @@ export async function getProductBySlug(slug: string) {
       .from('ratings')
       .select('flavor_id, overall_score, would_buy_again')
       .in('flavor_id', flavorIds)
+      .eq('schema_version', 2)
       .returns<RatingRow[]>()
 
     if (ratingsError) {
@@ -199,7 +201,7 @@ export async function getFlavorBySlug(slug: string) {
 
   // Batch 1: ratings, siblings, and auth can all run in parallel (depend only on flavor)
   const [ratingsResult, siblingsResult, authResult] = await Promise.all([
-    supabase.from('ratings').select('*').eq('flavor_id', flavor.id).order('created_at', { ascending: false }).limit(20),
+    supabase.from('ratings').select('*').eq('flavor_id', flavor.id).eq('schema_version', 2).order('created_at', { ascending: false }).limit(20),
     supabase.from('flavors').select('id, name, slug').eq('product_id', flavor.product_id).neq('id', flavor.id).order('name').limit(20),
     supabase.auth.getUser(),
   ])
@@ -296,6 +298,7 @@ export async function getLeaderboard(limit = 20) {
   const { data: ratings, error: ratingsError } = await supabase
     .from('ratings')
     .select('flavor_id, overall_score, would_buy_again')
+    .eq('schema_version', 2)
     .order('created_at', { ascending: false })
     .limit(2000)
     .returns<RatingRow[]>()
@@ -460,7 +463,8 @@ export async function getUnifiedFeed(limit = 30, userId?: string) {
 
   const { data: ratings, error: ratingsError } = await supabase
     .from('ratings')
-    .select('id, overall_score, would_buy_again, review_text, photo_url, created_at, flavor_id, user_id, scores, context_tags')
+    .select('id, overall_score, would_buy_again, review_text, photo_url, created_at, flavor_id, user_id, scores, context_tags, value_score')
+    .eq('schema_version', 2)
     .order('created_at', { ascending: false })
     .limit(limit)
     .returns<FeedRatingRow[]>()
@@ -524,6 +528,7 @@ export async function getUnifiedFeed(limit = 30, userId?: string) {
     created_at: r.created_at,
     scores: r.scores,
     context_tags: r.context_tags,
+    value_score: r.value_score ?? null,
     comment_count: commentCountMap[r.id] ?? 0,
     like_count: likeCountMap[r.id] ?? 0,
     user_has_liked: likedByMe.has(r.id),
@@ -551,8 +556,9 @@ export async function getFollowingUnifiedFeed(userId: string, limit = 30) {
 
   const { data: ratings, error: ratingsError } = await supabase
     .from('ratings')
-    .select('id, overall_score, would_buy_again, review_text, photo_url, created_at, flavor_id, user_id, scores, context_tags')
+    .select('id, overall_score, would_buy_again, review_text, photo_url, created_at, flavor_id, user_id, scores, context_tags, value_score')
     .in('user_id', followingIds)
+    .eq('schema_version', 2)
     .order('created_at', { ascending: false })
     .limit(limit)
     .returns<FeedRatingRow[]>()
@@ -616,6 +622,7 @@ export async function getFollowingUnifiedFeed(userId: string, limit = 30) {
     created_at: r.created_at,
     scores: r.scores,
     context_tags: r.context_tags,
+    value_score: r.value_score ?? null,
     comment_count: commentCountMap[r.id] ?? 0,
     like_count: likeCountMap[r.id] ?? 0,
     user_has_liked: likedByMe.has(r.id),

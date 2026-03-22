@@ -45,6 +45,7 @@ export default async function UserProfilePage({ params }: Props) {
     .from('ratings')
     .select('*, flavors(id, name, slug, products(name, slug, brands(name)))')
     .eq('user_id', profile.id)
+    .eq('schema_version', 2)
     .order('created_at', { ascending: false })
     .returns<RatingWithFlavorJoin[]>()
 

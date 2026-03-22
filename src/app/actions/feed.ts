@@ -8,8 +8,9 @@ export async function loadMoreFeed(cursor: string, userId?: string) {
 
   const { data: ratings } = await db
     .from('ratings')
-    .select('id, overall_score, would_buy_again, review_text, photo_url, created_at, flavor_id, user_id, scores, context_tags')
+    .select('id, overall_score, would_buy_again, review_text, photo_url, created_at, flavor_id, user_id, scores, context_tags, value_score')
     .lt('created_at', cursor)
+    .eq('schema_version', 2)
     .order('created_at', { ascending: false })
     .limit(20)
 
@@ -54,6 +55,7 @@ export async function loadMoreFeed(cursor: string, userId?: string) {
     created_at: r.created_at as string,
     scores: r.scores as Record<string, number> | null,
     context_tags: r.context_tags as string[] | null,
+    value_score: (r as any).value_score ?? null,
     comment_count: commentCountMap[r.id] ?? 0,
     like_count: likeCountMap[r.id] ?? 0,
     user_has_liked: likedByMe.has(r.id),

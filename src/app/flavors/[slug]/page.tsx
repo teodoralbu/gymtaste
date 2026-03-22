@@ -43,6 +43,7 @@ export default async function FlavorPage({ params }: Props) {
     .from('ratings')
     .select('id', { count: 'exact', head: true })
     .eq('flavor_id', flavor.id)
+    .eq('schema_version', 2)
     .gte('created_at', sevenDaysAgo)
   const thisWeekCount = weeklyCount ?? 0
 
