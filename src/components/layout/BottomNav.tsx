@@ -11,7 +11,6 @@ export function BottomNav() {
   const profileHref = profile?.username ? `/users/${profile.username}` : '/login'
 
   const homeActive    = pathname === '/'
-  const browseActive  = pathname.startsWith('/browse') || pathname.startsWith('/products') || pathname.startsWith('/flavors') || pathname.startsWith('/brands')
   const rateActive    = pathname.startsWith('/rate')
   const topActive     = pathname.startsWith('/leaderboard')
   const profileActive = pathname.startsWith('/users') || pathname.startsWith('/settings') || pathname === '/login' || pathname === '/signup'
@@ -71,15 +70,6 @@ export function BottomNav() {
         </svg>
         <span style={labelStyle(homeActive)}>Home</span>
         {homeActive && <span style={{ position: 'absolute', top: '6px', left: '50%', transform: 'translateX(-50%)', width: '16px', height: '2px', borderRadius: '999px', backgroundColor: 'var(--accent)' }} />}
-      </Link>
-
-      {/* Browse */}
-      <Link href="/browse" style={tabStyle(browseActive)}>
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={browseActive ? 2.5 : 2} strokeLinecap="round" strokeLinejoin="round">
-          <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
-        </svg>
-        <span style={labelStyle(browseActive)}>Browse</span>
-        {browseActive && <span style={{ position: 'absolute', top: '6px', left: '50%', transform: 'translateX(-50%)', width: '16px', height: '2px', borderRadius: '999px', backgroundColor: 'var(--accent)' }} />}
       </Link>
 
       {/* Rate — floating center action */}
