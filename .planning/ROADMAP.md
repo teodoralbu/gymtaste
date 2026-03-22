@@ -59,7 +59,12 @@ Plans:
   2. User can enter the price they paid per container during review submission
   3. Value score appears automatically on the review, calculated from price and quality (no manual slider)
   4. Old reviews (pre-v1.1 schema) are hidden from all feeds, product pages, and leaderboards
-**Plans**: TBD
+**Plans:** 3 plans
+
+Plans:
+- [ ] 07-01-PLAN.md — DB migration + types + constants for v2 rating schema (RATE-01, RATE-02, RATE-03, RATE-04)
+- [ ] 07-02-PLAN.md — RatingForm overhaul: new dimensions, price input, value score calc (RATE-01, RATE-02, RATE-03)
+- [ ] 07-03-PLAN.md — ReviewCard value pill + schema_version filtering across all queries (RATE-03, RATE-04)
 
 ### Phase 8: Comment System Upgrade
 **Goal**: Users can manage their comments and engage in threaded conversations
@@ -124,7 +129,7 @@ Plans:
 | 4. Quality & Accessibility | v1.0 | 4/4 | Complete | 2026-03-21 |
 | 5. Security & Accessibility Polish | v1.0 | 1/1 | Complete | 2026-03-20 |
 | 6. Bug Fixes & UX Quick Wins | v1.1 | Complete    | 2026-03-22 | - |
-| 7. Rating System Overhaul | v1.1 | 0/? | Not started | - |
+| 7. Rating System Overhaul | v1.1 | 0/3 | Planned | - |
 | 8. Comment System Upgrade | v1.1 | 0/? | Not started | - |
 | 9. Notification System | v1.1 | 0/? | Not started | - |
 | 10. Product Page Upgrade | v1.1 | 0/? | Not started | - |
