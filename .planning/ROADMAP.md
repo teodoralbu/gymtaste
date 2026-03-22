@@ -74,7 +74,11 @@ Plans:
   1. User can edit their own comment and the comment displays an "edited" marker afterward
   2. User can delete their own comment (thread structure preserved with placeholder if replies exist)
   3. User can reply to a top-level comment, and replies display nested under the parent (single level, Instagram style)
-**Plans**: TBD
+**Plans:** 2 plans
+
+Plans:
+- [ ] 08-01-PLAN.md — DB migration + types + comment count fix (COMM-01, COMM-02, COMM-03)
+- [ ] 08-02-PLAN.md — Edit/delete UI + threaded reply UI in CommentsSection (COMM-01, COMM-02, COMM-03)
 
 ### Phase 9: Notification System
 **Goal**: Users are informed when others interact with their content and can browse their social connections
@@ -130,7 +134,7 @@ Plans:
 | 5. Security & Accessibility Polish | v1.0 | 1/1 | Complete | 2026-03-20 |
 | 6. Bug Fixes & UX Quick Wins | v1.1 | Complete    | 2026-03-22 | - |
 | 7. Rating System Overhaul | 3/3 | Complete    | 2026-03-22 | - |
-| 8. Comment System Upgrade | v1.1 | 0/? | Not started | - |
+| 8. Comment System Upgrade | v1.1 | 0/2 | Planned | - |
 | 9. Notification System | v1.1 | 0/? | Not started | - |
 | 10. Product Page Upgrade | v1.1 | 0/? | Not started | - |
 | 11. Leaderboard Category Tabs | v1.1 | 0/? | Not started | - |
