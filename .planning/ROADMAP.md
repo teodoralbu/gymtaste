@@ -27,7 +27,7 @@ Full archive: `.planning/milestones/v1.0-ROADMAP.md`
 - [x] **Phase 6: Bug Fixes & UX Quick Wins** - Fix known bugs and add landing page hero image (completed 2026-03-22)
 - [x] **Phase 7: Rating System Overhaul** - New rating dimensions, price capture, schema versioning (completed 2026-03-22)
 - [x] **Phase 8: Comment System Upgrade** - Edit, delete, and single-level threaded replies (completed 2026-03-23)
-- [ ] **Phase 9: Notification System** - Follow/like notifications, unread badge, followers list
+- [x] **Phase 9: Notification System** - Follow/like notifications, unread badge, followers list (completed 2026-03-23)
 - [ ] **Phase 10: Product Page Upgrade** - Hero image, label viewer, nutritional slider
 - [ ] **Phase 11: Leaderboard Category Tabs** - Swipeable tabs by dimension and product type
 - [ ] **Phase 12: Profile & Dosage Calculator** - Body stats, personalized dosage ranges, safety disclaimers
