@@ -385,12 +385,74 @@ export async function getLeaderboard(limit = 20, tab: LeaderboardTab = 'overall'
       flavor_id: a.flavor_id,
       name: flavorMap[a.flavor_id].name,
       slug: flavorMap[a.flavor_id].slug,
+      flavor_image_url: flavorMap[a.flavor_id].image_url,
       tags: flavorMap[a.flavor_id].flavor_tag_assignments
         ?.map((t) => t.flavor_tags)
         .filter(Boolean) as FlavorTag[],
       avg_overall_score: a.avg,
       rating_count: a.count,
       would_buy_again_pct: a.wba_pct,
+      product: flavorMap[a.flavor_id].products as Product & { brands: Brand },
+    }))
+}
+
+// ─── Top Rated This Month ─────────────────────────────────────────────────────
+
+export async function getTopRatedThisMonth(limit = 10) {
+  const supabase = await createServerSupabaseClient()
+  const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
+
+  const { data: ratings, error } = await supabase
+    .from('ratings')
+    .select('flavor_id, overall_score, would_buy_again')
+    .eq('schema_version', 2)
+    .gte('created_at', thirtyDaysAgo)
+    .returns<Pick<RatingRow, 'flavor_id' | 'overall_score' | 'would_buy_again'>[]>()
+
+  // Fall back to all-time leaderboard if no 30-day data
+  if (error || !ratings || ratings.length === 0) return getLeaderboard(limit)
+
+  const grouped: Record<string, number[]> = {}
+  for (const r of ratings) {
+    if (!grouped[r.flavor_id]) grouped[r.flavor_id] = []
+    grouped[r.flavor_id].push(r.overall_score)
+  }
+
+  const aggregated = Object.entries(grouped)
+    .filter(([, scores]) => scores.length >= MIN_RATINGS_FOR_LEADERBOARD)
+    .map(([flavor_id, scores]) => ({
+      flavor_id,
+      avg: scores.reduce((s, x) => s + x, 0) / scores.length,
+      count: scores.length,
+    }))
+    .sort((a, b) => b.avg - a.avg || b.count - a.count)
+    .slice(0, limit)
+
+  if (aggregated.length === 0) return getLeaderboard(limit)
+
+  const flavorIds = aggregated.map(a => a.flavor_id)
+  const { data: flavors } = await supabase
+    .from('flavors')
+    .select('*, products(*, brands(*))')
+    .in('id', flavorIds)
+    .returns<FlavorWithProductAndTags[]>()
+
+  if (!flavors) return []
+  const flavorMap: Record<string, FlavorWithProductAndTags> = {}
+  for (const f of flavors) flavorMap[f.id] = f
+
+  return aggregated
+    .filter(a => flavorMap[a.flavor_id])
+    .map((a, idx) => ({
+      rank: idx + 1,
+      flavor_id: a.flavor_id,
+      name: flavorMap[a.flavor_id].name,
+      slug: flavorMap[a.flavor_id].slug,
+      flavor_image_url: flavorMap[a.flavor_id].image_url,
+      tags: [] as FlavorTag[],
+      avg_overall_score: a.avg,
+      rating_count: a.count,
+      would_buy_again_pct: 0,
       product: flavorMap[a.flavor_id].products as Product & { brands: Brand },
     }))
 }
