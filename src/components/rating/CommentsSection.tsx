@@ -63,11 +63,21 @@ function CommentBottomSheet({
 
   const db = useMemo(() => createClient(), [])
 
-  // Body scroll lock
+  // Body scroll lock — iOS-safe (overflow:hidden alone doesn't work on Safari)
   useEffect(() => {
-    document.body.style.overflow = open ? 'hidden' : ''
-    return () => {
-      document.body.style.overflow = ''
+    if (open) {
+      const scrollY = window.scrollY
+      document.body.style.position = 'fixed'
+      document.body.style.top = `-${scrollY}px`
+      document.body.style.width = '100%'
+      document.body.style.overflow = 'hidden'
+      return () => {
+        document.body.style.position = ''
+        document.body.style.top = ''
+        document.body.style.width = ''
+        document.body.style.overflow = ''
+        window.scrollTo(0, scrollY)
+      }
     }
   }, [open])
 
@@ -719,6 +729,7 @@ function CommentBottomSheet({
                       borderRadius: '20px', padding: '8px 14px', fontSize: '16px',
                       color: 'var(--text)', outline: 'none', fontFamily: 'inherit',
                       transition: 'border-color 0.15s ease',
+                      touchAction: 'manipulation',
                     }}
                   />
                   <button
