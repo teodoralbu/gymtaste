@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Feature Expansion
 status: unknown
-stopped_at: Completed 09-02-PLAN.md
-last_updated: "2026-03-23T09:00:09.886Z"
+stopped_at: Completed 09-01-PLAN.md
+last_updated: "2026-03-23T09:00:32.018Z"
 progress:
   total_phases: 7
   completed_phases: 4
@@ -45,6 +45,7 @@ Plan: 2 of 2
 | Phase 07-03 PDisplay filters and value pill | 2min | 2 tasks | 5 files |
 | 08-01 | Comment schema foundation | 1min | 2 | 4 |
 | Phase 08-02 PComment UI upgrade | 2min | 2 tasks | 1 files |
+| 09-01 | Notification badge on bell icon | 2min | 2 | 5 |
 | 09-02 | Followers/following list pages | 2min | 2 | 3 |
 
 ## Accumulated Context
@@ -76,6 +77,9 @@ Carried forward from v1.0:
 - [Phase 08-01]: edited_at uses TIMESTAMPTZ over boolean for richer edit data
 - [Phase 08-01]: Partial index on parent_comment_id WHERE NOT NULL
 - [Phase 08-02]: Combined edit/delete and reply threading into single renderComment helper
+- [Phase 09-01]: Head-only count queries for efficient unread notification counting
+- [Phase 09-01]: Badge clears on page load via markNotificationsSeen, not per-notification tracking
+- [Phase 09-01]: last_notifications_seen_at defaults NULL (all notifications unread for first-time visitors)
 - [Phase 09-02]: Maintained follow order by created_at descending for consistent display
 - [Phase 09-02]: Used separate query for current user follow status to populate FollowButton
 
@@ -92,6 +96,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-23T09:20:00Z
-Stopped at: Completed 09-02-PLAN.md
-Resume file: .planning/phases/09-notification-system/09-02-SUMMARY.md
+Last session: 2026-03-23T09:00:32.016Z
+Stopped at: Completed 09-01-PLAN.md
+Resume file: None
