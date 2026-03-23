@@ -58,6 +58,20 @@ export interface Product {
   beta_alanine_g: number | null
   price_per_serving: number | null
   servings_per_container: number | null
+  // Nutritional values (per serving, canonical)
+  calories: number | null
+  protein_g: number | null
+  carbs_g: number | null
+  fat_g: number | null
+  sugar_g: number | null
+  sodium_mg: number | null
+  // Serving weights for unit conversion
+  scoop_weight_g: number | null
+  serving_weight_g: number | null
+  // Label data
+  ingredients: string[] | null
+  sweeteners: string[] | null
+  chemicals: string[] | null
   barcode: string | null
   is_approved: boolean
   submitted_by: string | null
