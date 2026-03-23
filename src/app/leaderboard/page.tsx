@@ -3,6 +3,7 @@ export const revalidate = 300
 import Link from 'next/link'
 import Image from 'next/image'
 import { getLeaderboard, getTopReviewers } from '@/lib/queries'
+
 import { getScoreColor, getBadgeTier, BADGE_TIERS } from '@/lib/constants'
 
 const PODIUM_ACCENTS: Record<number, { color: string; label: string; glow: string }> = {
@@ -19,6 +20,74 @@ export default async function LeaderboardPage() {
 
   return (
     <div style={{ maxWidth: '860px', margin: '0 auto', padding: 'clamp(16px, 5vw, 48px) 16px 96px' }}>
+
+      {/* Hero card — always visible, first section */}
+      <div style={{
+        borderRadius: 'var(--radius-lg)',
+        backgroundColor: 'var(--bg-card)',
+        border: '1px solid var(--border)',
+        overflow: 'hidden',
+        textAlign: 'center',
+        marginBottom: '24px',
+      }}>
+        <Image
+          src="/hero-placeholder.jpg"
+          alt="Pre-workout supplement"
+          width={800}
+          height={400}
+          style={{
+            width: '100%',
+            height: 'auto',
+            maxHeight: '200px',
+            objectFit: 'cover',
+            display: 'block',
+          }}
+          priority
+        />
+        <div style={{ padding: '28px 20px' }}>
+          <h1 style={{
+            fontSize: 'clamp(26px, 8vw, 36px)',
+            fontWeight: 900,
+            lineHeight: 1.05,
+            letterSpacing: '-0.03em',
+            margin: '0 0 10px',
+            color: 'var(--text)',
+          }}>
+            Rate it before you{' '}
+            <span style={{ color: 'var(--accent)' }}>waste it.</span>
+          </h1>
+          <p style={{
+            fontSize: '14px',
+            color: 'var(--text-dim)',
+            margin: '0 0 20px',
+            lineHeight: 1.6,
+          }}>
+            Discover what the fitness community actually thinks. Real experiences, real ratings.
+          </p>
+          <Link
+            href="/browse"
+            style={{
+              display: 'block', width: '100%', textAlign: 'center',
+              padding: '13px 20px', boxSizing: 'border-box',
+              backgroundColor: 'var(--accent)', color: '#000',
+              borderRadius: 'var(--radius-md)', fontSize: '15px', fontWeight: 700,
+              textDecoration: 'none', marginBottom: '10px',
+            }}
+          >
+            Browse Products
+          </Link>
+          <Link
+            href="/leaderboard"
+            style={{
+              display: 'block', textAlign: 'center',
+              padding: '6px 0', fontSize: '13px', fontWeight: 600,
+              color: 'var(--text-dim)', textDecoration: 'none',
+            }}
+          >
+            See Top Rated →
+          </Link>
+        </div>
+      </div>
 
       {/* Header */}
       <div style={{ marginBottom: '40px' }}>
