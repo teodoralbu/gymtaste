@@ -76,13 +76,8 @@ export default async function ProductPage({ params }: Props) {
             backgroundColor: 'var(--bg-card)',
             border: '1px solid var(--border)',
             overflow: 'hidden',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
             marginBottom: '24px',
             boxShadow: 'var(--shadow-md)',
-            padding: '20px',
-            boxSizing: 'border-box',
           }}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -92,7 +87,8 @@ export default async function ProductPage({ params }: Props) {
             style={{
               width: '100%',
               height: '100%',
-              objectFit: 'contain',
+              objectFit: 'cover',
+              objectPosition: 'center',
             }}
           />
         </div>

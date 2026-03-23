@@ -299,12 +299,12 @@ export function FeedCard({ rating, item, initialLiked = false, initialLikeCount 
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', minHeight: '52px' }}>
           {/* Product image — 52px */}
           <div style={{
-            width: '68px', height: '68px', borderRadius: '10px', flexShrink: 0,
+            width: '72px', height: '72px', borderRadius: '10px', flexShrink: 0,
             backgroundColor: 'var(--bg-elevated)', border: '1px solid var(--border)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden',
+            overflow: 'hidden',
           }}>
             {product?.image_url ? (
-              <Image src={product.image_url} alt={`${product?.name ?? 'Product'} by ${brand?.name ?? 'Unknown'}`} width={68} height={68} style={{ objectFit: 'contain', padding: '2px' }} />
+              <Image src={product.image_url} alt={`${product?.name ?? 'Product'} by ${brand?.name ?? 'Unknown'}`} width={72} height={72} style={{ objectFit: 'cover', objectPosition: 'center 65%', width: '100%', height: '100%' }} />
             ) : (
               <span style={{ fontSize: '20px' }}>⚡</span>
             )}
