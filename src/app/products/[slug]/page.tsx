@@ -5,6 +5,8 @@ import Link from 'next/link'
 import type { Metadata } from 'next'
 import { getProductBySlug } from '@/lib/queries'
 import { getScoreColor } from '@/lib/constants'
+import { NutritionSwitcher } from './NutritionSwitcher'
+import { LabelModal } from './LabelModal'
 
 interface Props {
   params: Promise<{ slug: string }>
@@ -63,85 +65,75 @@ export default async function ProductPage({ params }: Props) {
         <span style={{ color: 'var(--text-faint)' }}>{product.name}</span>
       </nav>
 
-      {/* Header */}
-      <div
-        style={{
-          display: 'flex',
-          gap: '28px',
-          alignItems: 'flex-start',
-          marginBottom: '36px',
-          flexWrap: 'wrap',
-        }}
-      >
-        {product.image_url && (
-          <div
+      {/* Hero image */}
+      {product.image_url && (
+        <div
+          style={{
+            width: '100%',
+            height: 'clamp(200px, 40vw, 320px)',
+            borderRadius: 'var(--radius-xl)',
+            backgroundColor: 'var(--bg-card)',
+            border: '1px solid var(--border)',
+            overflow: 'hidden',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginBottom: '24px',
+            boxShadow: 'var(--shadow-md)',
+          }}
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={product.image_url}
+            alt={`${product.name} by ${brand?.name ?? 'Unknown'}`}
             style={{
-              width: '128px',
-              height: '128px',
-              borderRadius: 'var(--radius-md)',
-              flexShrink: 0,
-              backgroundColor: 'var(--bg-card)',
-              border: '1px solid var(--border)',
-              overflow: 'hidden',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              boxShadow: 'var(--shadow-md)',
+              maxWidth: '80%',
+              maxHeight: '85%',
+              objectFit: 'contain',
             }}
-          >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={product.image_url}
-              alt={`${product.name} by ${brand?.name ?? 'Unknown'}`}
-              style={{
-                width: '100%',
-                height: '100%',
-                objectFit: 'contain',
-                padding: '10px',
-              }}
-            />
-          </div>
-        )}
-
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <div
-            style={{
-              fontSize: '11px',
-              fontWeight: 700,
-              color: 'var(--accent)',
-              letterSpacing: '0.08em',
-              textTransform: 'uppercase',
-              marginBottom: '8px',
-            }}
-          >
-            {brand?.name}
-          </div>
-          <h1
-            style={{
-              fontSize: 'clamp(26px, 5vw, 44px)',
-              fontWeight: 900,
-              margin: '0 0 12px',
-              color: 'var(--text)',
-              lineHeight: 1.1,
-              letterSpacing: '-0.02em',
-            }}
-          >
-            {product.name}
-          </h1>
-          {product.description && (
-            <p
-              style={{
-                color: 'var(--text-muted)',
-                fontSize: '15px',
-                lineHeight: 1.65,
-                maxWidth: '600px',
-                margin: 0,
-              }}
-            >
-              {product.description}
-            </p>
-          )}
+          />
         </div>
+      )}
+
+      {/* Brand + Product name */}
+      <div style={{ marginBottom: '36px' }}>
+        <div
+          style={{
+            fontSize: '11px',
+            fontWeight: 700,
+            color: 'var(--accent)',
+            letterSpacing: '0.08em',
+            textTransform: 'uppercase',
+            marginBottom: '8px',
+          }}
+        >
+          {brand?.name}
+        </div>
+        <h1
+          style={{
+            fontSize: 'clamp(26px, 5vw, 44px)',
+            fontWeight: 900,
+            margin: '0 0 12px',
+            color: 'var(--text)',
+            lineHeight: 1.1,
+            letterSpacing: '-0.02em',
+          }}
+        >
+          {product.name}
+        </h1>
+        {product.description && (
+          <p
+            style={{
+              color: 'var(--text-muted)',
+              fontSize: '15px',
+              lineHeight: 1.65,
+              maxWidth: '600px',
+              margin: 0,
+            }}
+          >
+            {product.description}
+          </p>
+        )}
       </div>
 
       {/* Specs */}
@@ -194,6 +186,29 @@ export default async function ProductPage({ params }: Props) {
           ))}
         </div>
       )}
+
+      {/* Nutrition */}
+      <div style={{ marginBottom: '24px' }}>
+        <NutritionSwitcher
+          calories={product.calories}
+          proteinG={product.protein_g}
+          carbsG={product.carbs_g}
+          fatG={product.fat_g}
+          sugarG={product.sugar_g}
+          sodiumMg={product.sodium_mg}
+          scoopWeightG={product.scoop_weight_g}
+          servingWeightG={product.serving_weight_g}
+        />
+      </div>
+
+      {/* Label */}
+      <div style={{ marginBottom: '40px' }}>
+        <LabelModal
+          ingredients={product.ingredients}
+          sweeteners={product.sweeteners}
+          chemicals={product.chemicals}
+        />
+      </div>
 
       {/* Flavors */}
       <div>
