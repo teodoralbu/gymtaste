@@ -107,8 +107,8 @@ Plans:
 **Plans:** 2 plans
 
 Plans:
-- [ ] 09-01-PLAN.md — Unread badge on bell icon with DB tracking (NOTIF-01, NOTIF-02, NOTIF-03)
-- [ ] 09-02-PLAN.md — Followers/following list pages and profile links (NOTIF-04)
+- [ ] 10-01-PLAN.md — DB migration + types for nutritional/label columns (PROD-01, PROD-02, PROD-03, PROD-04)
+- [ ] 10-02-PLAN.md — Product page UI: hero image, nutrition switcher, label modal (PROD-01, PROD-02, PROD-03, PROD-04)
 
 ### Phase 11: Leaderboard Category Tabs
 **Goal**: Users can compare products across specific quality dimensions within product types
@@ -151,11 +151,11 @@ Plans:
 | 6. Bug Fixes & UX Quick Wins | v1.1 | Complete    | 2026-03-22 | - |
 | 7. Rating System Overhaul | 3/3 | Complete    | 2026-03-22 | - |
 | 8. Comment System Upgrade | v1.1 | Complete    | 2026-03-23 | - |
-| 9. Notification System | v1.1 | 0/2 | Planning complete | - |
-| 10. Product Page Upgrade | v1.1 | 0/? | Not started | - |
+| 9. Notification System | v1.1 | 2/2 | Complete | 2026-03-23 |
+| 10. Product Page Upgrade | v1.1 | 0/2 | Planning complete | - |
 | 11. Leaderboard Category Tabs | v1.1 | 0/? | Not started | - |
 | 12. Profile & Dosage Calculator | v1.1 | 0/? | Not started | - |
 
 ---
 *Roadmap created: 2026-03-21*
-*Last updated: 2026-03-22*
+*Last updated: 2026-03-23*
