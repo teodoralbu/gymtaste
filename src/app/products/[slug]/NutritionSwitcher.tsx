@@ -40,7 +40,7 @@ export function NutritionSwitcher({
     { label: 'Fat', value: fatG, unit: 'g', decimals: 1 },
     { label: 'Sugar', value: sugarG, unit: 'g', decimals: 1 },
     { label: 'Sodium', value: sodiumMg, unit: 'mg', decimals: 0 },
-  ].filter((n) => n.value !== null) as { label: string; value: number; unit: string; decimals: number }[]
+  ].filter((n) => n.value != null && !isNaN(Number(n.value))) as { label: string; value: number; unit: string; decimals: number }[]
 
   if (nutrients.length === 0) return null
 
