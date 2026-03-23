@@ -304,7 +304,7 @@ export function FeedCard({ rating, item, initialLiked = false, initialLikeCount 
             overflow: 'hidden',
           }}>
             {product?.image_url ? (
-              <Image src={product.image_url} alt={`${product?.name ?? 'Product'} by ${brand?.name ?? 'Unknown'}`} width={72} height={72} style={{ objectFit: 'cover', objectPosition: 'center bottom', width: '100%', height: '100%' }} />
+              <Image src={product.image_url} alt={`${product?.name ?? 'Product'} by ${brand?.name ?? 'Unknown'}`} width={72} height={72} style={{ objectFit: 'contain', objectPosition: 'center bottom', width: '100%', height: '100%' }} />
             ) : (
               <span style={{ fontSize: '20px' }}>⚡</span>
             )}
