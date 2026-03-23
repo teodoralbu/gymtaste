@@ -120,8 +120,7 @@ Plans:
 **Plans:** 1/1 plans complete
 
 Plans:
-- [ ] 09-01-PLAN.md — Unread badge on bell icon with DB tracking (NOTIF-01, NOTIF-02, NOTIF-03)
-- [ ] 09-02-PLAN.md — Followers/following list pages and profile links (NOTIF-04)
+- [x] 11-01-PLAN.md — Nav restructure: rename and reorder bottom tabs (LEAD-01, LEAD-02)
 
 ### Phase 12: Profile & Dosage Calculator
 **Goal**: Users get personalized supplement guidance based on their body stats and goals
@@ -134,8 +133,8 @@ Plans:
 **Plans:** 2 plans
 
 Plans:
-- [ ] 09-01-PLAN.md — Unread badge on bell icon with DB tracking (NOTIF-01, NOTIF-02, NOTIF-03)
-- [ ] 09-02-PLAN.md — Followers/following list pages and profile links (NOTIF-04)
+- [ ] 12-01-PLAN.md — TDD dosage calculation module + vitest setup + types/constants (CALC-02, CALC-03)
+- [ ] 12-02-PLAN.md — Settings body stats form + DosageCard on product pages (CALC-01, CALC-02, CALC-03)
 
 ## Progress
 
@@ -154,7 +153,7 @@ Plans:
 | 9. Notification System | v1.1 | 2/2 | Complete | 2026-03-23 |
 | 10. Product Page Upgrade | v1.1 | 2/2 | Complete | 2026-03-23 |
 | 11. Leaderboard Category Tabs | v1.1 | 1/1 | Complete   | 2026-03-23 |
-| 12. Profile & Dosage Calculator | v1.1 | 0/? | Not started | - |
+| 12. Profile & Dosage Calculator | v1.1 | 0/2 | Planning complete | - |
 
 ---
 *Roadmap created: 2026-03-21*
