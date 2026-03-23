@@ -25,6 +25,8 @@ export interface CategoryRatingDimension {
   created_at: string
 }
 
+export type FitnessGoal = 'muscle_gain' | 'fat_loss' | 'endurance'
+
 export interface User {
   id: string
   username: string
@@ -35,6 +37,9 @@ export interface User {
   xp: number
   created_at: string
   last_notifications_seen_at: string | null
+  height_cm: number | null
+  weight_kg: number | null
+  fitness_goal: FitnessGoal | null
 }
 
 export interface Brand {
@@ -291,7 +296,7 @@ export type Database = {
     Tables: {
       categories: { Row: R<Category>; Insert: R<Omit<Category, 'id' | 'created_at'>>; Update: R<Partial<Category>>; Relationships: never[] }
       category_rating_dimensions: { Row: R<CategoryRatingDimension>; Insert: R<Omit<CategoryRatingDimension, 'id' | 'created_at'>>; Update: R<Partial<CategoryRatingDimension>>; Relationships: never[] }
-      users: { Row: R<User>; Insert: R<Omit<User, 'created_at' | 'last_notifications_seen_at'> & { last_notifications_seen_at?: string | null }>; Update: R<Partial<User>>; Relationships: never[] }
+      users: { Row: R<User>; Insert: R<Omit<User, 'created_at' | 'last_notifications_seen_at' | 'height_cm' | 'weight_kg' | 'fitness_goal'> & { last_notifications_seen_at?: string | null; height_cm?: number | null; weight_kg?: number | null; fitness_goal?: FitnessGoal | null }>; Update: R<Partial<User>>; Relationships: never[] }
       brands: { Row: R<Brand>; Insert: R<Omit<Brand, 'id' | 'created_at'>>; Update: R<Partial<Brand>>; Relationships: never[] }
       products: { Row: R<Product>; Insert: R<Omit<Product, 'id' | 'created_at'>>; Update: R<Partial<Product>>; Relationships: never[] }
       flavors: { Row: R<Flavor>; Insert: R<Omit<Flavor, 'id' | 'created_at'>>; Update: R<Partial<Flavor>>; Relationships: never[] }

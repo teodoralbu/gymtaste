@@ -8,7 +8,8 @@ import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Badge } from '@/components/ui/Badge'
 import { PageContainer } from '@/components/layout/PageContainer'
-import { MAX_BIO_LENGTH } from '@/lib/constants'
+import { MAX_BIO_LENGTH, FITNESS_GOALS } from '@/lib/constants'
+import type { FitnessGoal } from '@/lib/types'
 
 export default function SettingsPage() {
   const { profile, user, signOut, refreshProfile } = useAuth()
@@ -21,6 +22,12 @@ export default function SettingsPage() {
     username: profile?.username ?? '',
     bio: profile?.bio ?? '',
   })
+  const [bodyStats, setBodyStats] = useState({
+    height_cm: profile?.height_cm?.toString() ?? '',
+    weight_kg: profile?.weight_kg?.toString() ?? '',
+    fitness_goal: (profile?.fitness_goal as FitnessGoal | null) ?? ('' as FitnessGoal | ''),
+  })
+  const [savingStats, setSavingStats] = useState(false)
   const [saving, setSaving] = useState(false)
   const [uploadingAvatar, setUploadingAvatar] = useState(false)
   const [success, setSuccess] = useState('')
@@ -134,6 +141,40 @@ export default function SettingsPage() {
     }
   }
 
+  const handleSaveBodyStats = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setError('')
+    setSuccess('')
+
+    const height = bodyStats.height_cm ? parseFloat(bodyStats.height_cm) : null
+    const weight = bodyStats.weight_kg ? parseFloat(bodyStats.weight_kg) : null
+    const goal = bodyStats.fitness_goal || null
+
+    if (height !== null && (height < 100 || height > 250))
+      return setError('Height must be between 100 and 250 cm.')
+    if (weight !== null && (weight < 30 || weight > 300))
+      return setError('Weight must be between 30 and 300 kg.')
+
+    setSavingStats(true)
+
+    const { error } = await supabase
+      .from('users')
+      .update({
+        height_cm: height,
+        weight_kg: weight,
+        fitness_goal: goal,
+      })
+      .eq('id', user.id)
+
+    setSavingStats(false)
+    if (error) {
+      setError(error.message)
+    } else {
+      await refreshProfile()
+      setSuccess('Body stats updated.')
+    }
+  }
+
   const handleSignOut = async () => {
     await signOut()
     router.push('/')
@@ -221,6 +262,59 @@ export default function SettingsPage() {
 
           <Button type="submit" loading={saving} className="self-start">
             Save changes
+          </Button>
+        </form>
+      </section>
+
+      {/* Body Stats */}
+      <section className="mb-8 pb-8" style={{ borderBottom: '1px solid var(--border)' }}>
+        <h2 className="text-xs font-semibold uppercase tracking-wider mb-4" style={{ color: 'var(--text-dim)' }}>Body Stats</h2>
+        <p className="text-xs mb-4" style={{ color: 'var(--text-muted)' }}>
+          Used for personalized supplement dosage recommendations on product pages.
+        </p>
+        <form onSubmit={handleSaveBodyStats} className="flex flex-col gap-4">
+          <div className="flex gap-4">
+            <div className="flex-1">
+              <Input
+                label="Height (cm)"
+                type="number"
+                min={100}
+                max={250}
+                value={bodyStats.height_cm}
+                onChange={(e) => setBodyStats({ ...bodyStats, height_cm: e.target.value })}
+                placeholder="175"
+              />
+            </div>
+            <div className="flex-1">
+              <Input
+                label="Weight (kg)"
+                type="number"
+                min={30}
+                max={300}
+                value={bodyStats.weight_kg}
+                onChange={(e) => setBodyStats({ ...bodyStats, weight_kg: e.target.value })}
+                placeholder="80"
+              />
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <label className="text-sm font-medium" style={{ color: 'var(--text)' }}>Fitness Goal</label>
+            <select
+              value={bodyStats.fitness_goal}
+              onChange={(e) => setBodyStats({ ...bodyStats, fitness_goal: e.target.value as FitnessGoal | '' })}
+              className="input"
+              style={{ fontFamily: 'inherit', minHeight: '44px' }}
+            >
+              <option value="">Select a goal...</option>
+              {FITNESS_GOALS.map((g) => (
+                <option key={g.value} value={g.value}>{g.label}</option>
+              ))}
+            </select>
+          </div>
+
+          <Button type="submit" loading={savingStats} className="self-start">
+            Save body stats
           </Button>
         </form>
       </section>

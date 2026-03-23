@@ -119,6 +119,12 @@ export function getBadgeTier(ratingCount: number): BadgeTier {
   return 'fresh_meat'
 }
 
+export const FITNESS_GOALS = [
+  { value: 'muscle_gain', label: 'Muscle Gain' },
+  { value: 'fat_loss', label: 'Fat Loss' },
+  { value: 'endurance', label: 'Endurance' },
+] as const
+
 export const CONTEXT_TAGS = [
   // Workout type
   { value: 'leg_day',       label: 'Leg day' },

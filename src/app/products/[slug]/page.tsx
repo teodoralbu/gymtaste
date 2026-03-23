@@ -7,6 +7,7 @@ import { getProductBySlug } from '@/lib/queries'
 import { getScoreColor } from '@/lib/constants'
 import { NutritionSwitcher } from './NutritionSwitcher'
 import { LabelModal } from './LabelModal'
+import { DosageCalculator } from './DosageCalculator'
 
 interface Props {
   params: Promise<{ slug: string }>
@@ -199,6 +200,13 @@ export default async function ProductPage({ params }: Props) {
           servingWeightG={product.serving_weight_g}
         />
       </div>
+
+      {/* Dosage Calculator */}
+      <DosageCalculator
+        caffeineMg={product.caffeine_mg}
+        citrullineG={product.citrulline_g}
+        betaAlanineG={product.beta_alanine_g}
+      />
 
       {/* Label */}
       <div style={{ marginBottom: '40px' }}>
