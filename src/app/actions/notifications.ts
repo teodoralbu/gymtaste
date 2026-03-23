@@ -1,5 +1,6 @@
 'use server'
 
+import { revalidatePath } from 'next/cache'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
 
 export async function getUnreadNotificationCount(): Promise<number> {
@@ -66,4 +67,6 @@ export async function markNotificationsSeen(): Promise<void> {
     .from('users')
     .update({ last_notifications_seen_at: new Date().toISOString() })
     .eq('id', user.id)
+
+  revalidatePath('/', 'layout')
 }
