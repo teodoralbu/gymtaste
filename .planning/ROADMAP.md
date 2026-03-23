@@ -28,7 +28,7 @@ Full archive: `.planning/milestones/v1.0-ROADMAP.md`
 - [x] **Phase 7: Rating System Overhaul** - New rating dimensions, price capture, schema versioning (completed 2026-03-22)
 - [x] **Phase 8: Comment System Upgrade** - Edit, delete, and single-level threaded replies (completed 2026-03-23)
 - [x] **Phase 9: Notification System** - Follow/like notifications, unread badge, followers list (completed 2026-03-23)
-- [ ] **Phase 10: Product Page Upgrade** - Hero image, label viewer, nutritional slider
+- [x] **Phase 10: Product Page Upgrade** - Hero image, label viewer, nutritional slider (completed 2026-03-23)
 - [ ] **Phase 11: Leaderboard Category Tabs** - Swipeable tabs by dimension and product type
 - [ ] **Phase 12: Profile & Dosage Calculator** - Body stats, personalized dosage ranges, safety disclaimers
 
@@ -104,11 +104,11 @@ Plans:
   2. User can open a label view showing full ingredients, sweeteners, and chemicals
   3. User can switch nutritional values between per scoop, per serving, and per 100g using a swipeable control
   4. Nutritional values display is visually polished and easy to scan
-**Plans:** 1/2 plans executed
+**Plans:** 2/2 plans complete
 
 Plans:
-- [ ] 10-01-PLAN.md — DB migration + types for nutritional/label columns (PROD-01, PROD-02, PROD-03, PROD-04)
-- [ ] 10-02-PLAN.md — Product page UI: hero image, nutrition switcher, label modal (PROD-01, PROD-02, PROD-03, PROD-04)
+- [x] 10-01-PLAN.md — DB migration + types for nutritional/label columns (PROD-01, PROD-02, PROD-03, PROD-04)
+- [x] 10-02-PLAN.md — Product page UI: hero image, nutrition switcher, label modal (PROD-01, PROD-02, PROD-03, PROD-04)
 
 ### Phase 11: Leaderboard Category Tabs
 **Goal**: Users can compare products across specific quality dimensions within product types
@@ -152,7 +152,7 @@ Plans:
 | 7. Rating System Overhaul | 3/3 | Complete    | 2026-03-22 | - |
 | 8. Comment System Upgrade | v1.1 | Complete    | 2026-03-23 | - |
 | 9. Notification System | v1.1 | 2/2 | Complete | 2026-03-23 |
-| 10. Product Page Upgrade | 1/2 | In Progress|  | - |
+| 10. Product Page Upgrade | v1.1 | 2/2 | Complete | 2026-03-23 |
 | 11. Leaderboard Category Tabs | v1.1 | 0/? | Not started | - |
 | 12. Profile & Dosage Calculator | v1.1 | 0/? | Not started | - |
 

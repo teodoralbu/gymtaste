@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Feature Expansion
 status: unknown
-stopped_at: Completed 10-01-PLAN.md
-last_updated: "2026-03-23T14:22:06.892Z"
+stopped_at: Completed 10-02-PLAN.md
+last_updated: "2026-03-23T14:30:07.329Z"
 progress:
   total_phases: 7
-  completed_phases: 4
+  completed_phases: 5
   total_plans: 11
-  completed_plans: 10
+  completed_plans: 11
 ---
 
 # Project State
@@ -23,8 +23,8 @@ See: .planning/PROJECT.md (updated 2026-03-21)
 
 ## Current Position
 
-Phase: 10 (product-page-upgrade) — EXECUTING
-Plan: 2 of 2
+Phase: 10 (product-page-upgrade) — COMPLETE
+Plan: 2 of 2 (all complete)
 
 ## Performance Metrics
 
@@ -48,6 +48,7 @@ Plan: 2 of 2
 | 09-01 | Notification badge on bell icon | 2min | 2 | 5 |
 | 09-02 | Followers/following list pages | 2min | 2 | 3 |
 | Phase 10-01 PSchema & types foundation | 1min | 2 tasks | 3 files |
+| 10-02 | Product page UI: hero, nutrition, label | 2min | 3 | 3 |
 
 ## Accumulated Context
 
@@ -85,6 +86,8 @@ Carried forward from v1.0:
 - [Phase 09-02]: Used separate query for current user follow status to populate FollowButton
 - [Phase 10-01]: All nutritional columns nullable for progressive data population
 - [Phase 10-01]: Nutritional values stored per-serving as canonical basis for UI unit conversion
+- [Phase 10-02]: Per-serving as canonical storage basis; scoop and 100g derived via multiplier
+- [Phase 10-02]: Nutrition section and label button hidden entirely when all data is null
 
 ### Pending Todos
 
@@ -99,6 +102,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-23T14:22:06.889Z
-Stopped at: Completed 10-01-PLAN.md
+Last session: 2026-03-23T14:32:00Z
+Stopped at: Completed 10-02-PLAN.md
 Resume file: None
