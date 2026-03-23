@@ -89,7 +89,11 @@ Plans:
   2. User receives a notification when someone likes their review
   3. Unread notification count badge is visible on the notifications nav icon when unread notifications exist
   4. User can view their followers list and following list from their profile page
-**Plans**: TBD
+**Plans:** 2 plans
+
+Plans:
+- [ ] 09-01-PLAN.md — Unread badge on bell icon with DB tracking (NOTIF-01, NOTIF-02, NOTIF-03)
+- [ ] 09-02-PLAN.md — Followers/following list pages and profile links (NOTIF-04)
 
 ### Phase 10: Product Page Upgrade
 **Goal**: Product pages are visually compelling and provide detailed nutritional information
@@ -100,7 +104,11 @@ Plans:
   2. User can open a label view showing full ingredients, sweeteners, and chemicals
   3. User can switch nutritional values between per scoop, per serving, and per 100g using a swipeable control
   4. Nutritional values display is visually polished and easy to scan
-**Plans**: TBD
+**Plans:** 2 plans
+
+Plans:
+- [ ] 09-01-PLAN.md — Unread badge on bell icon with DB tracking (NOTIF-01, NOTIF-02, NOTIF-03)
+- [ ] 09-02-PLAN.md — Followers/following list pages and profile links (NOTIF-04)
 
 ### Phase 11: Leaderboard Category Tabs
 **Goal**: Users can compare products across specific quality dimensions within product types
@@ -109,7 +117,11 @@ Plans:
 **Success Criteria** (what must be TRUE):
   1. User can swipe between leaderboard tabs: Best Overall, Best Flavor, Best Pump, Best Value
   2. Leaderboards are filtered by product type, with Pre-workout as the first available category
-**Plans**: TBD
+**Plans:** 2 plans
+
+Plans:
+- [ ] 09-01-PLAN.md — Unread badge on bell icon with DB tracking (NOTIF-01, NOTIF-02, NOTIF-03)
+- [ ] 09-02-PLAN.md — Followers/following list pages and profile links (NOTIF-04)
 
 ### Phase 12: Profile & Dosage Calculator
 **Goal**: Users get personalized supplement guidance based on their body stats and goals
@@ -119,7 +131,11 @@ Plans:
   1. User can enter height, weight, and fitness goal (muscle gain / fat loss / endurance) on their profile settings
   2. Product pages display a dosage recommendation tailored to the user's saved profile data
   3. Calculator output includes a non-dismissable safety disclaimer citing recommended safe ranges (ISSN sources)
-**Plans**: TBD
+**Plans:** 2 plans
+
+Plans:
+- [ ] 09-01-PLAN.md — Unread badge on bell icon with DB tracking (NOTIF-01, NOTIF-02, NOTIF-03)
+- [ ] 09-02-PLAN.md — Followers/following list pages and profile links (NOTIF-04)
 
 ## Progress
 
@@ -135,7 +151,7 @@ Plans:
 | 6. Bug Fixes & UX Quick Wins | v1.1 | Complete    | 2026-03-22 | - |
 | 7. Rating System Overhaul | 3/3 | Complete    | 2026-03-22 | - |
 | 8. Comment System Upgrade | v1.1 | Complete    | 2026-03-23 | - |
-| 9. Notification System | v1.1 | 0/? | Not started | - |
+| 9. Notification System | v1.1 | 0/2 | Planning complete | - |
 | 10. Product Page Upgrade | v1.1 | 0/? | Not started | - |
 | 11. Leaderboard Category Tabs | v1.1 | 0/? | Not started | - |
 | 12. Profile & Dosage Calculator | v1.1 | 0/? | Not started | - |
