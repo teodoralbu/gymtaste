@@ -70,7 +70,8 @@ export default async function ProductPage({ params }: Props) {
         <div
           style={{
             width: '100%',
-            height: 'clamp(200px, 40vw, 320px)',
+            aspectRatio: '1 / 1',
+            maxHeight: '420px',
             borderRadius: 'var(--radius-xl)',
             backgroundColor: 'var(--bg-card)',
             border: '1px solid var(--border)',
@@ -80,6 +81,8 @@ export default async function ProductPage({ params }: Props) {
             justifyContent: 'center',
             marginBottom: '24px',
             boxShadow: 'var(--shadow-md)',
+            padding: '20px',
+            boxSizing: 'border-box',
           }}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -87,8 +90,8 @@ export default async function ProductPage({ params }: Props) {
             src={product.image_url}
             alt={`${product.name} by ${brand?.name ?? 'Unknown'}`}
             style={{
-              maxWidth: '80%',
-              maxHeight: '85%',
+              width: '100%',
+              height: '100%',
               objectFit: 'contain',
             }}
           />
