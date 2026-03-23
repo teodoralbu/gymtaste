@@ -39,37 +39,43 @@ patterns-established:
 
 requirements-completed: [COMM-01, COMM-02, COMM-03]
 
-duration: 2min
-completed: 2026-03-22
+duration: 3min
+completed: 2026-03-23
 ---
 
 # Phase 08 Plan 02: Comment UI Upgrade Summary
 
-**Edit/delete via three-dot menu and long-press, single-level threaded replies with indented display, inline edit with edited marker, and soft-delete placeholder rendering**
+**Edit/delete via three-dot menu and long-press, single-level threaded replies with indented display, inline edit with edited marker, soft-delete placeholder rendering, swipe-to-reply gestures, comment animations, and iOS scroll/zoom fixes**
 
 ## Performance
 
-- **Duration:** 2 min
+- **Duration:** 3 min
 - **Started:** 2026-03-22T12:36:52Z
-- **Completed:** 2026-03-22T12:39:00Z
-- **Tasks:** 2 (Task 3 is human-verify checkpoint)
+- **Completed:** 2026-03-23
+- **Tasks:** 3/3 complete
 - **Files modified:** 1
 
 ## Accomplishments
 - Full edit/delete functionality with three-dot menu and long-press trigger, inline edit textarea, and delete confirmation with soft/hard delete logic
 - Single-level threaded reply UI with indented replies, accent border, smaller avatars, reply mode chip, and "View N more replies" expansion
 - Comment interface updated with all new fields, loadComments fetches threading/delete/edit columns, client-side grouping via useMemo
+- Swipe-to-reply gesture and comment entry/exit animations added post-checkpoint
+- iOS scroll lock and input zoom issues fixed on comment sheet
+- Human verification passed for all COMM-01, COMM-02, COMM-03 requirements
 
 ## Task Commits
 
 Each task was committed atomically:
 
 1. **Task 1+2: Edit/delete + reply threading UI** - `9984ca7` (feat)
+2. **Post-checkpoint: Swipe-to-reply and animations** - `f0e08f1` (feat)
+3. **Post-checkpoint: iOS scroll lock and input zoom fix** - `bfbd735` (fix)
+4. **Task 3: Human verification** - approved, no code changes
 
 Note: Tasks 1 and 2 were implemented together since they modify the same file and the code is deeply interleaved (renderComment function serves both, state resets cover both, etc.).
 
 ## Files Created/Modified
-- `src/components/rating/CommentsSection.tsx` - Full comment system with edit, delete, threading (352 -> 471 lines net)
+- `src/components/rating/CommentsSection.tsx` - Full comment system with edit, delete, threading, swipe-to-reply, animations, iOS fixes
 
 ## Decisions Made
 - Combined Task 1 and Task 2 into a single implementation pass since renderComment, state variables, and the submit handler serve both features simultaneously
@@ -79,21 +85,21 @@ Note: Tasks 1 and 2 were implemented together since they modify the same file an
 
 ## Deviations from Plan
 
-None - plan executed as written. The only deviation is structural: Tasks 1 and 2 were committed together since they share the same code paths.
+None - plan executed as written. The only deviation is structural: Tasks 1 and 2 were committed together since they share the same code paths. Post-checkpoint commits added swipe-to-reply gestures, animations, and iOS fixes as polish.
 
 ## Issues Encountered
-None
+- iOS scroll lock and input zoom on comment sheet -- fixed in `bfbd735`
 
 ## User Setup Required
 None - no external service configuration required. Migration from Plan 01 must be applied to Supabase.
 
 ## Next Phase Readiness
-- All three COMM requirements implemented in code
-- Awaiting human verification (Task 3 checkpoint) to confirm browser behavior
+- All three COMM requirements verified by human in browser
+- Comment system fully operational with edit, delete, threading, gestures, and iOS compatibility
 - TypeScript compiles clean, Next.js build succeeds
 
 ---
 *Phase: 08-comment-system-upgrade*
-*Completed: 2026-03-22*
+*Completed: 2026-03-23*
 
 ## Self-Check: PASSED
