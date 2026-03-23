@@ -41,7 +41,7 @@ function LoginForm() {
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
           <h1 className="text-2xl font-black">Welcome back</h1>
-          <p className="text-[#A0A0A0] text-sm mt-2">Log in to your GYMTASTE account</p>
+          <p className="text-[#A0A0A0] text-sm mt-2">Log in to your FitFlavor account</p>
         </div>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">

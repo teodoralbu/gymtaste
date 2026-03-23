@@ -26,11 +26,11 @@ export const viewport: Viewport = {
 }
 
 export const metadata: Metadata = {
-  title: 'GYMTASTE — Rate it before you waste it.',
+  title: 'FitFlavor — Rate it before you waste it.',
   description:
-    "GYMTASTE is where lifters rate supplement flavors — so you don't blow $40 on something undrinkable.",
+    "FitFlavor is where lifters rate supplement flavors — so you don't blow $40 on something undrinkable.",
   openGraph: {
-    title: 'GYMTASTE',
+    title: 'FitFlavor',
     description: 'Rate it before you waste it.',
     type: 'website',
   },

@@ -415,7 +415,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ f
             margin: '0 auto 48px',
             lineHeight: 1.7,
           }}>
-            GYMTASTE is where lifters have a word. Real ratings from real people — on everything in the gym world.
+            FitFlavor is where lifters have a word. Real ratings from real people — on everything in the gym world.
           </p>
 
           {/* CTAs */}

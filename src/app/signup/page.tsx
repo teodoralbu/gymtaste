@@ -63,7 +63,7 @@ export default function SignupPage() {
     <div className="min-h-[calc(100vh-56px)] flex items-center justify-center px-4 py-16">
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-black">Join GYMTASTE</h1>
+          <h1 className="text-2xl font-black">Join FitFlavor</h1>
           <p className="text-[#A0A0A0] text-sm mt-2">Rate supplements. Build your rep.</p>
         </div>
 

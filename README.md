@@ -1,8 +1,8 @@
-# GYMTASTE
+# FitFlavor
 
 > **Rate it before you waste it.**
 
-GYMTASTE is a social rating platform for gym supplement flavors. Users rate, review, and discover pre-workout supplement flavors so they never waste money on something that tastes terrible.
+FitFlavor is a social rating platform for gym supplement flavors. Users rate, review, and discover pre-workout supplement flavors so they never waste money on something that tastes terrible.
 
 ## Quick Start
 
