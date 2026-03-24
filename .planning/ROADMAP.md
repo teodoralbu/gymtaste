@@ -30,7 +30,7 @@ Full archive: `.planning/milestones/v1.0-ROADMAP.md`
 - [x] **Phase 9: Notification System** - Follow/like notifications, unread badge, followers list (completed 2026-03-23)
 - [x] **Phase 10: Product Page Upgrade** - Hero image, label viewer, nutritional slider (completed 2026-03-23)
 - [x] **Phase 11: Leaderboard Category Tabs** - Swipeable tabs by dimension and product type (completed 2026-03-23)
-- [ ] **Phase 12: Profile & Dosage Calculator** - Body stats, personalized dosage ranges, safety disclaimers
+- [x] **Phase 12: Profile & Dosage Calculator** - Body stats, personalized dosage ranges, safety disclaimers (completed 2026-03-24)
 
 ## Phase Details
 
@@ -130,11 +130,11 @@ Plans:
   1. User can enter height, weight, and fitness goal (muscle gain / fat loss / endurance) on their profile settings
   2. Product pages display a dosage recommendation tailored to the user's saved profile data
   3. Calculator output includes a non-dismissable safety disclaimer citing recommended safe ranges (ISSN sources)
-**Plans:** 2 plans
+**Plans:** 2/2 plans complete
 
 Plans:
-- [ ] 12-01-PLAN.md — TDD dosage calculation module + vitest setup + types/constants (CALC-02, CALC-03)
-- [ ] 12-02-PLAN.md — Settings body stats form + DosageCard on product pages (CALC-01, CALC-02, CALC-03)
+- [x] 12-01-PLAN.md — TDD dosage calculation module + vitest setup + types/constants (CALC-02, CALC-03)
+- [x] 12-02-PLAN.md — Settings body stats form + DosageCard on product pages (CALC-01, CALC-02, CALC-03)
 
 ## Progress
 
@@ -153,7 +153,7 @@ Plans:
 | 9. Notification System | v1.1 | 2/2 | Complete | 2026-03-23 |
 | 10. Product Page Upgrade | v1.1 | 2/2 | Complete | 2026-03-23 |
 | 11. Leaderboard Category Tabs | v1.1 | 1/1 | Complete   | 2026-03-23 |
-| 12. Profile & Dosage Calculator | v1.1 | 0/2 | Planning complete | - |
+| 12. Profile & Dosage Calculator | v1.1 | 2/2 | Complete   | 2026-03-24 |
 
 ---
 *Roadmap created: 2026-03-21*

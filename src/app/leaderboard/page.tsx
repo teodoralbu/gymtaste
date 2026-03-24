@@ -219,13 +219,14 @@ export default async function LeaderboardPage() {
           </div>
           <div style={{
             display: 'flex', gap: '10px',
-            overflowX: 'auto', paddingLeft: '16px', paddingRight: '16px', paddingBottom: '4px',
+            overflowX: 'auto', paddingLeft: '16px', paddingBottom: '4px',
             scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch',
+            scrollSnapType: 'x mandatory',
           }}>
             {carouselItems.map((item) => {
               const imgSrc = item.flavor_image_url ?? item.product.image_url
               return (
-                <Link key={item.flavor_id} href={`/flavors/${item.slug}`} style={{ textDecoration: 'none', color: 'inherit', flexShrink: 0 }}>
+                <Link key={item.flavor_id} href={`/flavors/${item.slug}`} style={{ textDecoration: 'none', color: 'inherit', flexShrink: 0, scrollSnapAlign: 'start' }}>
                   <div style={{
                     width: '120px', borderRadius: 'var(--radius-lg)',
                     backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)',
@@ -266,12 +267,24 @@ export default async function LeaderboardPage() {
                 </Link>
               )
             })}
+            {/* Trailing spacer so last card is never clipped by the viewport edge */}
+            <div style={{ width: '16px', flexShrink: 0 }} aria-hidden="true" />
           </div>
         </div>
       )}
 
+      {/* ── Flavor Leaderboard — swipeable ── */}
+      <div style={{ padding: '0 16px' }}>
+        <div style={{ marginBottom: '16px' }}>
+          <h2 style={{ fontSize: 'clamp(20px, 4vw, 28px)', fontWeight: 900, margin: '0 0 20px', color: 'var(--text)', lineHeight: 1.1, padding: '0 16px' }}>
+            Top Rated Flavors
+          </h2>
+        </div>
+        <SwipeableLeaderboard allData={allLeaderboards} />
+      </div>
+
       {/* ── Divider ── */}
-      <div style={{ height: '1px', backgroundColor: 'var(--border)', margin: '28px 0 0' }} />
+      <div style={{ height: '1px', backgroundColor: 'var(--border)', margin: '32px 0 0' }} />
 
       {/* ── Top Members ── */}
       <div style={{ padding: '0 16px' }}>
@@ -337,14 +350,6 @@ export default async function LeaderboardPage() {
             </div>
           </div>
         )}
-
-        {/* ── Flavor Leaderboard — swipeable ── */}
-        <div style={{ marginBottom: '16px' }}>
-          <h2 style={{ fontSize: 'clamp(20px, 4vw, 28px)', fontWeight: 900, margin: '0 0 20px', color: 'var(--text)', lineHeight: 1.1, padding: '0 16px' }}>
-            Top Rated Flavors
-          </h2>
-        </div>
-        <SwipeableLeaderboard allData={allLeaderboards} />
       </div>
     </div>
   )

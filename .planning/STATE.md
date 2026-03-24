@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Feature Expansion
-status: Phase complete — ready for verification
-stopped_at: Completed 11-nav-restructure-11-01-PLAN.md
-last_updated: "2026-03-23T17:36:49.944Z"
+status: Milestone complete
+stopped_at: Completed 12-02-PLAN.md
+last_updated: "2026-03-24T00:00:00.000Z"
 progress:
   total_phases: 7
-  completed_phases: 6
-  total_plans: 12
-  completed_plans: 12
+  completed_phases: 7
+  total_plans: 14
+  completed_plans: 14
 ---
 
 # Project State
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-21)
 
 **Core value:** Users can confidently discover and rate gym supplement flavors through a fast, polished mobile experience
-**Current focus:** Phase 10 — product-page-upgrade
+**Current focus:** v1.1 complete — ready for v1.2 planning
 
 ## Current Position
 
-Phase: 10 (product-page-upgrade) — COMPLETE
-Plan: 2 of 2 (all complete)
+Phase: 12 (profile-dosage-calculator) — COMPLETE
+Milestone: v1.1 Feature Expansion — ALL PHASES COMPLETE
 
 ## Performance Metrics
 
@@ -51,6 +51,8 @@ Plan: 2 of 2 (all complete)
 | 10-02 | Product page UI: hero, nutrition, label | 2min | 3 | 3 |
 | Phase 11-nav-restructure P01 | 5 | 1 tasks | 1 files |
 | Phase 11-nav-restructure P01 | 5min | 1 tasks | 1 files |
+| Phase 12 P01 | 3min | 2 tasks | 6 files |
+| Phase 12 P02 | — | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -92,6 +94,9 @@ Carried forward from v1.0:
 - [Phase 10-02]: Nutrition section and label button hidden entirely when all data is null
 - [Phase 11-nav-restructure]: homeActive binds to /leaderboard; feedActive binds to / — variable names match new tab semantics
 - [Phase 11-nav-restructure]: homeActive binds to /leaderboard; feedActive binds to / — variable names match new tab semantics
+- [Phase 12]: Body stats fields nullable for progressive profile completion
+- [Phase 12]: Caffeine dosage weight-based (3-6 mg/kg ISSN); citrulline and beta-alanine use fixed daily ranges
+- [Phase 12]: Calculator requires weight_kg AND fitness_goal; height_cm captured for future use
 
 ### Pending Todos
 
@@ -106,6 +111,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-23T17:36:49.940Z
-Stopped at: Completed 11-nav-restructure-11-01-PLAN.md
+Last session: 2026-03-24T00:00:00.000Z
+Stopped at: Completed 12-02-PLAN.md — v1.1 milestone complete
 Resume file: None

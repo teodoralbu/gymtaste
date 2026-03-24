@@ -93,7 +93,7 @@ export function SwipeableLeaderboard({ allData }: Props) {
         display: 'flex',
         gap: '8px',
         overflowX: 'auto',
-        padding: '0 16px',
+        paddingLeft: '16px',
         marginBottom: '20px',
         scrollbarWidth: 'none',
       }}>
@@ -122,6 +122,8 @@ export function SwipeableLeaderboard({ allData }: Props) {
             </button>
           )
         })}
+        {/* Trailing spacer so last pill is never clipped */}
+        <div style={{ width: '16px', flexShrink: 0 }} aria-hidden="true" />
       </div>
 
       {/* ── Swipe rail ── */}
