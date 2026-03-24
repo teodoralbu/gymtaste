@@ -88,13 +88,19 @@ export function SwipeableLeaderboard({ allData }: Props) {
 
   return (
     <div>
-      {/* ── Tab pills ── */}
+      {/* ── Tab pills — sticky so they stay visible while scrolling the list ── */}
       <div style={{
+        position: 'sticky',
+        top: 0,
+        zIndex: 10,
+        backgroundColor: 'var(--bg)',
         display: 'flex',
         gap: '8px',
         overflowX: 'auto',
         paddingLeft: '16px',
-        marginBottom: '20px',
+        paddingTop: '10px',
+        paddingBottom: '10px',
+        marginBottom: '8px',
         scrollbarWidth: 'none',
       }}>
         {TABS.map((tab, i) => {

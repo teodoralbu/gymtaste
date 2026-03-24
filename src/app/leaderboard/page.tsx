@@ -3,8 +3,9 @@ export const revalidate = 300
 import Link from 'next/link'
 import Image from 'next/image'
 import { getLeaderboard, getTopReviewers, getTopRatedThisMonth, type LeaderboardTab } from '@/lib/queries'
-import { getScoreColor, getBadgeTier, BADGE_TIERS } from '@/lib/constants'
+import { getBadgeTier, BADGE_TIERS } from '@/lib/constants'
 import { SwipeableLeaderboard } from './SwipeableLeaderboard'
+import { TopRatedCarousel } from './TopRatedCarousel'
 
 const TABS: { key: LeaderboardTab; label: string }[] = [
   { key: 'overall',      label: 'Overall' },
@@ -213,63 +214,11 @@ export default async function LeaderboardPage() {
       {/* ── Top Rated This Month carousel ── */}
       {carouselItems.length > 0 && (
         <div style={{ marginTop: '24px', marginBottom: '8px' }}>
-          <div style={{ padding: '0 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
             <span style={{ fontSize: '17px', fontWeight: 800, color: 'var(--text)' }}>Top Rated This Month</span>
             <span style={{ fontSize: '13px', color: 'var(--text-dim)', fontWeight: 600 }}>Pre-Workout</span>
           </div>
-          <div style={{
-            display: 'flex', gap: '10px',
-            overflowX: 'auto', paddingLeft: '16px', paddingBottom: '4px',
-            scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch',
-            scrollSnapType: 'x mandatory',
-          }}>
-            {carouselItems.map((item) => {
-              const imgSrc = item.flavor_image_url ?? item.product.image_url
-              return (
-                <Link key={item.flavor_id} href={`/flavors/${item.slug}`} style={{ textDecoration: 'none', color: 'inherit', flexShrink: 0, scrollSnapAlign: 'start' }}>
-                  <div style={{
-                    width: '120px', borderRadius: 'var(--radius-lg)',
-                    backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)',
-                    overflow: 'hidden', display: 'flex', flexDirection: 'column',
-                  }}>
-                    <div style={{ position: 'relative', width: '120px', height: '140px', flexShrink: 0 }}>
-                      {imgSrc ? (
-                        <Image src={imgSrc} alt={item.name} fill style={{ objectFit: 'cover' }} sizes="120px" />
-                      ) : (
-                        <div style={{
-                          width: '100%', height: '100%',
-                          background: 'linear-gradient(160deg, color-mix(in srgb, var(--accent) 30%, var(--bg-elevated)) 0%, color-mix(in srgb, var(--accent) 10%, var(--bg-elevated)) 100%)',
-                          display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        }}>
-                          <span style={{ fontSize: '32px', fontWeight: 900, color: 'var(--accent)', opacity: 0.5, letterSpacing: '-0.03em' }}>
-                            {(item.product.brands?.name ?? item.name)[0]?.toUpperCase()}
-                          </span>
-                        </div>
-                      )}
-                      {item.rank <= 3 && (
-                        <div style={{ position: 'absolute', top: '8px', right: '8px', fontSize: '14px', lineHeight: 1 }}>
-                          {item.rank === 1 ? '🥇' : item.rank === 2 ? '🥈' : '🥉'}
-                        </div>
-                      )}
-                    </div>
-                    <div style={{ padding: '10px 10px 12px' }}>
-                      <div style={{ fontSize: '20px', fontWeight: 900, color: getScoreColor(item.avg_overall_score), lineHeight: 1, marginBottom: '5px', letterSpacing: '-0.02em' }}>
-                        {item.avg_overall_score.toFixed(1)}
-                      </div>
-                      <div style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text)', lineHeight: 1.3, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', marginBottom: '4px' }}>
-                        {item.name}
-                      </div>
-                      <div style={{ fontSize: '11px', color: 'var(--text-dim)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontWeight: 500 }}>
-                        {item.product.brands?.name}
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-              )
-            })}
-            {/* Trailing spacer so last card is never clipped by the viewport edge */}
-            <div style={{ width: '16px', flexShrink: 0 }} aria-hidden="true" />
-          </div>
+          <TopRatedCarousel items={carouselItems} />
         </div>
       )}
 
