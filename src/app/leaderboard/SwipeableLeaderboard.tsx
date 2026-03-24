@@ -36,12 +36,22 @@ interface Props {
 }
 
 export function SwipeableLeaderboard({ allData }: Props) {
-  const [activeIndex, setActiveIndex] = useState(0)
+  const n = allData.length // 5
+
+  // Triple for infinite loop — start in middle copy
+  const tripleData = [...allData, ...allData, ...allData]
+
+  const [activeIndex, setActiveIndex] = useState(n)
   const [dragOffset, setDragOffset] = useState(0)
   const [isDragging, setIsDragging] = useState(false)
+  const [noTransition, setNoTransition] = useState(false)
+
   const touchStartX = useRef(0)
   const touchStartY = useRef(0)
   const isHorizontal = useRef<boolean | null>(null)
+
+  // Which logical tab (0-4) is currently shown
+  const actualTab = activeIndex % n
 
   function handleTouchStart(e: React.TouchEvent) {
     touchStartX.current = e.touches[0].clientX
@@ -55,28 +65,21 @@ export function SwipeableLeaderboard({ allData }: Props) {
     const dx = e.touches[0].clientX - touchStartX.current
     const dy = e.touches[0].clientY - touchStartY.current
 
-    // Determine scroll direction on first significant move
     if (isHorizontal.current === null && (Math.abs(dx) > 4 || Math.abs(dy) > 4)) {
       isHorizontal.current = Math.abs(dx) > Math.abs(dy)
     }
 
     if (!isHorizontal.current) return
-
     e.preventDefault()
-
-    // Clamp: resist dragging past first/last tab
-    const atStart = activeIndex === 0 && dx > 0
-    const atEnd = activeIndex === TABS.length - 1 && dx < 0
-    const resistance = atStart || atEnd ? 0.25 : 1
-    setDragOffset(dx * resistance)
+    setDragOffset(dx)
   }
 
   function handleTouchEnd() {
     setIsDragging(false)
     if (isHorizontal.current) {
-      if (dragOffset < -60 && activeIndex < TABS.length - 1) {
+      if (dragOffset < -60) {
         setActiveIndex(i => i + 1)
-      } else if (dragOffset > 60 && activeIndex > 0) {
+      } else if (dragOffset > 60) {
         setActiveIndex(i => i - 1)
       }
     }
@@ -84,7 +87,18 @@ export function SwipeableLeaderboard({ allData }: Props) {
     isHorizontal.current = null
   }
 
-  const leaderboard = allData[activeIndex] ?? []
+  function handleTransitionEnd() {
+    // Silently jump back to middle copy so infinite wrap is seamless
+    if (activeIndex < n || activeIndex >= 2 * n) {
+      setNoTransition(true)
+      setActiveIndex(i => {
+        if (i < n) return i + n
+        if (i >= 2 * n) return i - n
+        return i
+      })
+      requestAnimationFrame(() => requestAnimationFrame(() => setNoTransition(false)))
+    }
+  }
 
   return (
     <div>
@@ -104,11 +118,12 @@ export function SwipeableLeaderboard({ allData }: Props) {
         scrollbarWidth: 'none',
       }}>
         {TABS.map((tab, i) => {
-          const isActive = i === activeIndex
+          const isActive = i === actualTab
           return (
             <button
               key={tab.key}
-              onClick={() => setActiveIndex(i)}
+              // Always navigate to the middle-copy position of that tab
+              onClick={() => setActiveIndex(n + i)}
               style={{
                 flexShrink: 0,
                 padding: '7px 16px',
@@ -128,7 +143,6 @@ export function SwipeableLeaderboard({ allData }: Props) {
             </button>
           )
         })}
-        {/* Trailing spacer so last pill is never clipped */}
         <div style={{ width: '16px', flexShrink: 0 }} aria-hidden="true" />
       </div>
 
@@ -143,11 +157,14 @@ export function SwipeableLeaderboard({ allData }: Props) {
           style={{
             display: 'flex',
             transform: `translateX(calc(${-activeIndex * 100}% + ${dragOffset}px))`,
-            transition: isDragging ? 'none' : 'transform 0.32s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+            transition: isDragging || noTransition
+              ? 'none'
+              : 'transform 0.32s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
             willChange: 'transform',
           }}
+          onTransitionEnd={handleTransitionEnd}
         >
-          {allData.map((items, panelIdx) => (
+          {tripleData.map((items, panelIdx) => (
             <div
               key={panelIdx}
               style={{ minWidth: '100%', width: '100%', padding: '0 16px', boxSizing: 'border-box' }}
@@ -184,12 +201,10 @@ export function SwipeableLeaderboard({ allData }: Props) {
                             overflow: 'hidden',
                           }}
                         >
-                          {/* Podium side bar */}
                           {isPodium && (
                             <div style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: '3px', backgroundColor: podium.color, borderRadius: '3px 0 0 3px' }} />
                           )}
 
-                          {/* Rank */}
                           <div style={{ width: isPodium ? '36px' : '30px', textAlign: 'center', flexShrink: 0 }}>
                             {isPodium ? (
                               <span style={{ fontSize: '20px', lineHeight: 1 }}>
@@ -202,7 +217,6 @@ export function SwipeableLeaderboard({ allData }: Props) {
                             )}
                           </div>
 
-                          {/* Info */}
                           <div style={{ flex: 1, minWidth: 0 }}>
                             <div style={{ fontSize: '11px', color: 'var(--text-faint)', marginBottom: '3px', textTransform: 'uppercase', letterSpacing: '0.06em', fontWeight: 600 }}>
                               {item.product.brands?.name ?? ''} · {item.product.name}
@@ -221,7 +235,6 @@ export function SwipeableLeaderboard({ allData }: Props) {
                             )}
                           </div>
 
-                          {/* Score */}
                           <div style={{ textAlign: 'right', flexShrink: 0 }}>
                             <div style={{ fontSize: isPodium ? '32px' : '26px', fontWeight: 900, color: getScoreColor(item.avg_overall_score), lineHeight: 1, marginBottom: '4px', letterSpacing: '-0.02em' }}>
                               {item.avg_overall_score.toFixed(1)}
@@ -251,12 +264,12 @@ export function SwipeableLeaderboard({ allData }: Props) {
         {TABS.map((_, i) => (
           <div
             key={i}
-            onClick={() => setActiveIndex(i)}
+            onClick={() => setActiveIndex(n + i)}
             style={{
-              width: i === activeIndex ? '20px' : '6px',
+              width: i === actualTab ? '20px' : '6px',
               height: '6px',
               borderRadius: '999px',
-              backgroundColor: i === activeIndex ? 'var(--accent)' : 'var(--border)',
+              backgroundColor: i === actualTab ? 'var(--accent)' : 'var(--border)',
               transition: 'width 0.25s ease, background-color 0.25s ease',
               cursor: 'pointer',
             }}

@@ -223,7 +223,7 @@ export default async function LeaderboardPage() {
       )}
 
       {/* ── Flavor Leaderboard — swipeable ── */}
-      <div style={{ padding: '0 16px' }}>
+      <div style={{ padding: '0 16px', marginTop: '32px' }}>
         <div style={{ marginBottom: '16px' }}>
           <h2 style={{ fontSize: 'clamp(20px, 4vw, 28px)', fontWeight: 900, margin: '0 0 20px', color: 'var(--text)', lineHeight: 1.1, padding: '0 16px' }}>
             Top Rated Flavors
