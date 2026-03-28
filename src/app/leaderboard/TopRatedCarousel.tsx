@@ -25,8 +25,6 @@ type CarouselItem = {
 
 export function TopRatedCarousel({ items }: { items: CarouselItem[] }) {
   const n = items.length
-  if (n === 0) return null
-
   // Triple for infinite feel: [copy A | copy B (start here) | copy C]
   const all = [...items, ...items, ...items]
 
@@ -35,6 +33,7 @@ export function TopRatedCarousel({ items }: { items: CarouselItem[] }) {
 
   // Initialise scroll position at middle copy so user can scroll both directions
   useEffect(() => {
+    if (n === 0) return
     const el = scrollRef.current
     if (!el) return
     el.scrollLeft = n * ITEM_W
@@ -42,6 +41,7 @@ export function TopRatedCarousel({ items }: { items: CarouselItem[] }) {
 
   // After scroll settles, silently reset to middle copy — seamless infinite wrap
   useEffect(() => {
+    if (n === 0) return
     const el = scrollRef.current
     if (!el) return
 
@@ -64,17 +64,19 @@ export function TopRatedCarousel({ items }: { items: CarouselItem[] }) {
     }
   }, [n])
 
+  if (n === 0) return null
+
   return (
     // Break out of page's 16px horizontal padding so cards reach the viewport edge
     <div style={{ margin: '0 -16px' }}>
       <div
         ref={scrollRef}
+        className="no-scrollbar"
         style={{
           display: 'flex',
           gap: `${GAP}px`,
           overflowX: 'scroll',
           scrollSnapType: 'x mandatory',
-          scrollbarWidth: 'none',
           WebkitOverflowScrolling: 'touch',
           paddingLeft: '16px',
           paddingRight: '16px',

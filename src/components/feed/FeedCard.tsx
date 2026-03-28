@@ -177,7 +177,7 @@ function RepCard({ item, index = 0 }: { item: FeedItem; index?: number }) {
         {repType === 'pr' && (
           <div style={{ marginBottom: '6px' }}>
             <div style={{ fontSize: '20px', fontWeight: 900, color: 'var(--text)', letterSpacing: '-0.02em', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-              🏋️ {item.pr_exercise}: {item.pr_value}{item.pr_unit}
+              🏋️ {item.pr_exercise}: {item.pr_value} {item.pr_unit}
             </div>
           </div>
         )}

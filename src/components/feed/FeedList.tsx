@@ -15,10 +15,12 @@ export function FeedList({ initialItems, initialCursor, userId }: FeedListProps)
   const [items, setItems] = useState<FeedItem[]>(initialItems)
   const [cursor, setCursor] = useState<string | null>(initialCursor)
   const [loading, setLoading] = useState(false)
+  const loadingRef = useRef(false) // ref avoids adding loading to useCallback deps
   const sentinelRef = useRef<HTMLDivElement>(null)
 
   const loadMore = useCallback(async () => {
-    if (!cursor || loading) return
+    if (!cursor || loadingRef.current) return
+    loadingRef.current = true
     setLoading(true)
     try {
       const { items: newItems, nextCursor } = await loadMoreFeed(cursor, userId)
@@ -27,9 +29,10 @@ export function FeedList({ initialItems, initialCursor, userId }: FeedListProps)
     } catch (err) {
       console.error('Failed to load more feed items:', err)
     } finally {
+      loadingRef.current = false
       setLoading(false)
     }
-  }, [cursor, loading, userId])
+  }, [cursor, userId])
 
   useEffect(() => {
     const sentinel = sentinelRef.current

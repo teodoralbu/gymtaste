@@ -155,6 +155,10 @@ a { color: inherit; text-decoration: none; }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--text-faint); }
 
+/* Hide scrollbar completely — for carousels and pill bars */
+.no-scrollbar { scrollbar-width: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+
 /* ─── Range slider ───────────────────────────────────────────────────────────── */
 
 input[type='range'] {
