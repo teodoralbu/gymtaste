@@ -115,6 +115,8 @@ export function SwipeableLeaderboard({ allData }: Props) {
         paddingTop: '10px',
         paddingBottom: '10px',
         marginBottom: '8px',
+        marginLeft: '-16px',
+        marginRight: '-16px',
         scrollbarWidth: 'none',
       }}>
         {TABS.map((tab, i) => {
@@ -146,9 +148,9 @@ export function SwipeableLeaderboard({ allData }: Props) {
         <div style={{ width: '16px', flexShrink: 0 }} aria-hidden="true" />
       </div>
 
-      {/* ── Swipe rail ── */}
+      {/* ── Swipe rail — full viewport width so clipping happens at natural edges ── */}
       <div
-        style={{ overflow: 'hidden', touchAction: 'pan-y' }}
+        style={{ overflow: 'hidden', touchAction: 'pan-y', marginLeft: '-16px', marginRight: '-16px' }}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}

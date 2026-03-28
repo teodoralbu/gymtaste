@@ -1,13 +1,13 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useRef, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { getScoreColor } from '@/lib/constants'
 
 const CARD_W = 120
 const GAP = 10
-const STEP = CARD_W + GAP // 130px per slide
+const ITEM_W = CARD_W + GAP // 130px per slot
 
 type CarouselItem = {
   flavor_id: string
@@ -27,93 +27,66 @@ export function TopRatedCarousel({ items }: { items: CarouselItem[] }) {
   const n = items.length
   if (n === 0) return null
 
-  // Triple items for infinite loop: [copy A | copy B (start) | copy C]
+  // Triple for infinite feel: [copy A | copy B (start here) | copy C]
   const all = [...items, ...items, ...items]
 
-  // Start at index n = first card of middle copy
-  const [idx, setIdx] = useState(n)
-  const [dragOffset, setDragOffset] = useState(0)
-  const [isDragging, setIsDragging] = useState(false)
-  const [noTransition, setNoTransition] = useState(false)
+  const scrollRef = useRef<HTMLDivElement>(null)
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  const touchStartX = useRef(0)
-  const touchStartY = useRef(0)
-  const isHorizontal = useRef<boolean | null>(null)
+  // Initialise scroll position at middle copy so user can scroll both directions
+  useEffect(() => {
+    const el = scrollRef.current
+    if (!el) return
+    el.scrollLeft = n * ITEM_W
+  }, [n])
 
-  // card at `idx` aligns to 16px from the left edge of the full-bleed container
-  const translateX = -(idx * STEP) + 16 + dragOffset
+  // After scroll settles, silently reset to middle copy — seamless infinite wrap
+  useEffect(() => {
+    const el = scrollRef.current
+    if (!el) return
 
-  function handleTouchStart(e: React.TouchEvent) {
-    touchStartX.current = e.touches[0].clientX
-    touchStartY.current = e.touches[0].clientY
-    isHorizontal.current = null
-    setIsDragging(true)
-    setDragOffset(0)
-  }
-
-  function handleTouchMove(e: React.TouchEvent) {
-    const dx = e.touches[0].clientX - touchStartX.current
-    const dy = e.touches[0].clientY - touchStartY.current
-
-    if (isHorizontal.current === null && (Math.abs(dx) > 4 || Math.abs(dy) > 4)) {
-      isHorizontal.current = Math.abs(dx) > Math.abs(dy)
+    const onScroll = () => {
+      if (timerRef.current) clearTimeout(timerRef.current)
+      timerRef.current = setTimeout(() => {
+        const total = n * ITEM_W
+        if (el.scrollLeft < total) {
+          el.scrollLeft += total
+        } else if (el.scrollLeft >= 2 * total) {
+          el.scrollLeft -= total
+        }
+      }, 150)
     }
 
-    if (!isHorizontal.current) return
-    e.preventDefault()
-    setDragOffset(dx)
-  }
-
-  function handleTouchEnd() {
-    setIsDragging(false)
-    isHorizontal.current = null
-
-    if (dragOffset < -40) {
-      setIdx(i => i + 1)
-    } else if (dragOffset > 40) {
-      setIdx(i => i - 1)
+    el.addEventListener('scroll', onScroll, { passive: true })
+    return () => {
+      el.removeEventListener('scroll', onScroll)
+      if (timerRef.current) clearTimeout(timerRef.current)
     }
-    setDragOffset(0)
-  }
-
-  function handleTransitionEnd() {
-    // Silently jump back to the middle copy so the loop is seamless
-    if (idx < n || idx >= 2 * n) {
-      setNoTransition(true)
-      setIdx(i => {
-        if (i < n) return i + n
-        if (i >= 2 * n) return i - n
-        return i
-      })
-      // Re-enable transition after two frames so the silent jump has painted
-      requestAnimationFrame(() => requestAnimationFrame(() => setNoTransition(false)))
-    }
-  }
+  }, [n])
 
   return (
     // Break out of page's 16px horizontal padding so cards reach the viewport edge
-    <div style={{ overflow: 'hidden', margin: '0 -16px' }}>
+    <div style={{ margin: '0 -16px' }}>
       <div
+        ref={scrollRef}
         style={{
           display: 'flex',
           gap: `${GAP}px`,
-          transform: `translateX(${translateX}px)`,
-          transition: isDragging || noTransition
-            ? 'none'
-            : 'transform 0.32s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-          willChange: 'transform',
-          touchAction: 'pan-y',
-          userSelect: 'none',
+          overflowX: 'scroll',
+          scrollSnapType: 'x mandatory',
+          scrollbarWidth: 'none',
+          WebkitOverflowScrolling: 'touch',
+          paddingLeft: '16px',
+          paddingRight: '16px',
         }}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
-        onTransitionEnd={handleTransitionEnd}
       >
         {all.map((item, i) => {
           const imgSrc = item.flavor_image_url ?? item.product.image_url ?? null
           return (
-            <div key={`${item.flavor_id}-${i}`} style={{ flexShrink: 0, width: `${CARD_W}px` }}>
+            <div
+              key={`${item.flavor_id}-${i}`}
+              style={{ flexShrink: 0, width: `${CARD_W}px`, scrollSnapAlign: 'start' }}
+            >
               <Link href={`/flavors/${item.slug}`} style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}>
                 <div style={{
                   borderRadius: 'var(--radius-lg)',
